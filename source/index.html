@@ -322,11 +322,7 @@
       });
     });
 
-    // load projects from GitHub API
-    const LANG_COLORS = {
-      JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',PHP:'#4F5D95',
-      Java:'#b07219',HTML:'#e34c26',CSS:'#563d7c',Go:'#00ADD8',Shell:'#89e051'
-    };
+    // load projects from local JSON (fetched by GitHub Action)
     const LANG_TAG_BG = {
       JavaScript:'rgba(241,224,90,.12)',TypeScript:'rgba(49,120,198,.12)',Python:'rgba(53,114,165,.12)',
       PHP:'rgba(79,93,149,.12)',HTML:'rgba(227,76,38,.12)',CSS:'rgba(86,61,124,.12)',
@@ -336,44 +332,40 @@
       JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#6db3f2',PHP:'#8b9ed4',
       HTML:'#f06529',CSS:'#9b72cf',Go:'#00ADD8',Shell:'#89e051',Java:'#b07219'
     };
-    const SKIP = ['cmijohnson.github.io'];
 
-    fetch('https://api.github.com/users/cmijohnson/repos?per_page=100&sort=updated')
+    fetch('/repos.json')
       .then(r => r.json())
       .then(repos => {
-        const filtered = repos
-          .filter(r => !r.fork && !r.private && !SKIP.includes(r.name))
-          .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at));
+        repos.sort((a, b) => b.stars - a.stars || new Date(b.updated) - new Date(a.updated));
 
-        // update ticker
-        const stars = filtered.reduce((s, r) => s + r.stargazers_count, 0);
-        const langs = [...new Set(filtered.map(r => r.language).filter(Boolean))];
-        document.getElementById('t-repos').textContent = filtered.length;
+        const stars = repos.reduce((s, r) => s + (r.stars || 0), 0);
+        const langs = [...new Set(repos.map(r => r.language).filter(Boolean))];
+        document.getElementById('t-repos').textContent = repos.length;
         document.getElementById('t-stars').textContent = stars;
         document.getElementById('t-langs').textContent = langs.length;
 
         const grid = document.getElementById('project-grid');
-        grid.innerHTML = filtered.map(r => {
+        grid.innerHTML = repos.map(r => {
           const lang = r.language || '';
           const tagBg = LANG_TAG_BG[lang] || 'rgba(255,255,255,.06)';
           const tagFg = LANG_TAG_FG[lang] || '#8b95a8';
           return `
-            <a class="project-card" href="${r.html_url}" target="_blank" rel="noopener">
+            <a class="project-card" href="${r.url}" target="_blank" rel="noopener">
               <div class="project-top">
                 <span class="project-name"><i class="far fa-folder"></i> ${esc(r.name)}</span>
-                ${r.stargazers_count ? `<span class="project-stars">★ ${r.stargazers_count}</span>` : ''}
+                ${r.stars ? `<span class="project-stars">★ ${r.stars}</span>` : ''}
               </div>
               <div class="project-desc">${esc(r.description || '暂无描述')}</div>
               <div class="project-meta">
                 ${lang ? `<span class="tag" style="background:${tagBg};color:${tagFg}">${esc(lang)}</span>` : ''}
-                <span class="date">${new Date(r.pushed_at).toLocaleDateString('zh-CN')}</span>
+                <span class="date">${new Date(r.updated).toLocaleDateString('zh-CN')}</span>
               </div>
             </a>`;
         }).join('');
       })
       .catch(() => {
         document.getElementById('project-grid').innerHTML =
-          '<p style="text-align:center;color:var(--text3);grid-column:1/-1;padding:40px">加载失败，请访问 <a href="https://github.com/cmijohnson" style="color:var(--blue)">GitHub</a> 查看</p>';
+          '<p style="text-align:center;color:var(--text3);grid-column:1/-1;padding:40px">暂无数据</p>';
       });
 
     function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }

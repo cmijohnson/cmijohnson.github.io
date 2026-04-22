@@ -3,6 +3,8 @@ name: Deploy
 on:
   push:
     branches: [main]
+  schedule:
+    - cron: '0 */6 * * *'
   workflow_dispatch:
 
 permissions:
@@ -26,6 +28,12 @@ jobs:
           cache: npm
 
       - run: npm install
+
+      - name: Fetch repos
+        run: |
+          curl -s "https://api.github.com/users/cmijohnson/repos?per_page=100&sort=updated" \
+            | jq '[.[] | select(.fork==false and .private==false and .name!="cmijohnson.github.io") | {name:.name,description:.description,language:.language,stars:.stargazers_count,updated:.pushed_at,url:.html_url}]' \
+            > source/repos.json
 
       - name: Build Hexo
         run: npx hexo generate
