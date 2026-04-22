@@ -99,13 +99,18 @@
   <div class="gate" id="gate">
     <div class="gate-box">
       <h2>博客编辑器</h2>
-      <p>通过 GitHub API 直接管理 Hexo 博客文章</p>
+      <p>管理 Hexo 博客文章</p>
       <input type="password" id="token-input" placeholder="GitHub Personal Access Token">
-      <button onclick="saveToken()">进入编辑器</button>
+      <button onclick="saveToken()">GitHub 模式</button>
+      <div style="margin:16px 0;display:flex;align-items:center;gap:12px">
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+        <span style="font-size:.78rem;color:var(--text2)">或</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <button onclick="localMode()" style="background:var(--green);color:#111"><i class="fas fa-folder-open"></i> 本地模式</button>
       <div class="hint">
-        需要一个有 <code>repo</code> 权限的 Token：<br>
-        GitHub → Settings → Developer settings → Personal access tokens → Generate new token<br>
-        勾选 <code>repo</code> (Full control of private repositories)
+        <b>GitHub 模式</b>：直接读写远程仓库，需 <code>repo</code> 权限 Token<br>
+        <b>本地模式</b>：导入/导出本地 <code>.md</code> 文件，无需 Token
       </div>
     </div>
   </div>
@@ -128,6 +133,10 @@
       <div class="toolbar">
         <button class="btn btn-green" onclick="savePost()"><i class="fas fa-save"></i> 保存</button>
         <button class="btn btn-red" onclick="deletePost()" id="btn-delete" style="display:none"><i class="fas fa-trash"></i> 删除</button>
+        <div class="sep" id="sep-local" style="display:none"></div>
+        <button class="btn btn-ghost" id="btn-import" onclick="importLocal()" style="display:none"><i class="fas fa-file-import"></i> 导入 .md</button>
+        <button class="btn btn-ghost" id="btn-export" onclick="exportLocal()" style="display:none"><i class="fas fa-file-export"></i> 导出 .md</button>
+        <input type="file" id="file-input" accept=".md,.markdown" style="display:none" onchange="handleImport(event)" multiple>
         <div class="sep"></div>
         <button class="btn btn-ghost" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出</button>
         <span class="status" id="status"></span>
@@ -170,21 +179,29 @@
     const POSTS_DIR = 'source/_posts';
 
     let token = localStorage.getItem('gh_token') || '';
+    let isLocal = false;
     let posts = [];
-    let currentPost = null; // {name, sha, path}
+    let currentPost = null; // {name, sha, path} for GitHub, {name, content} for local
 
-    // ── token ──
+    // ── mode entry ──
     if (token) initApp();
 
     function saveToken() {
       token = document.getElementById('token-input').value.trim();
       if (!token) return toast('请输入 Token', 'error');
       localStorage.setItem('gh_token', token);
+      isLocal = false;
+      initApp();
+    }
+    function localMode() {
+      isLocal = true;
+      token = '';
       initApp();
     }
     function logout() {
       localStorage.removeItem('gh_token');
       token = '';
+      isLocal = false;
       document.getElementById('gate').style.display = 'flex';
       document.getElementById('app').style.display = 'none';
     }
@@ -193,7 +210,12 @@
     async function initApp() {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
-      await loadPosts();
+      // toggle local buttons
+      document.getElementById('btn-import').style.display = isLocal ? 'inline-flex' : 'none';
+      document.getElementById('btn-export').style.display = isLocal ? 'inline-flex' : 'none';
+      document.getElementById('sep-local').style.display = isLocal ? 'block' : 'none';
+      if (!isLocal) await loadPosts();
+      else { posts = []; renderPostList(); }
     }
 
     // ── github api ──
@@ -215,7 +237,7 @@
       return res.json();
     }
 
-    // ── load posts ──
+    // ── load posts (GitHub) ──
     async function loadPosts() {
       try {
         const files = await ghAPI(`contents/${POSTS_DIR}?ref=${BRANCH}`);
@@ -231,13 +253,13 @@
     function renderPostList() {
       const el = document.getElementById('post-list');
       if (!posts.length) {
-        el.innerHTML = '<div style="padding:20px;text-align:center;color:var(--text2);font-size:.85rem">暂无文章</div>';
+        el.innerHTML = `<div style="padding:20px;text-align:center;color:var(--text2);font-size:.85rem">${isLocal ? '点击「导入 .md」或「新建」开始' : '暂无文章'}</div>`;
         return;
       }
-      el.innerHTML = posts.map(p => {
+      el.innerHTML = posts.map((p, i) => {
         const name = p.name.replace('.md', '');
         const active = currentPost && currentPost.name === p.name ? 'active' : '';
-        return `<div class="post-item ${active}" onclick='openPost(${JSON.stringify(JSON.stringify(p))})'>
+        return `<div class="post-item ${active}" onclick='openPost(${i})'>
           <div class="title">${esc(name)}</div>
           <div class="meta">${p.name}</div>
         </div>`;
@@ -245,10 +267,19 @@
     }
 
     // ── open post ──
-    async function openPost(jsonStr) {
-      const p = JSON.parse(jsonStr);
+    async function openPost(index) {
+      const p = posts[index];
       currentPost = p;
       document.getElementById('status').textContent = '加载中...';
+
+      if (isLocal) {
+        parseFrontMatter(p.content);
+        document.getElementById('btn-delete').style.display = 'inline-flex';
+        document.getElementById('status').textContent = p.name;
+        renderPostList();
+        return;
+      }
+
       try {
         const data = await ghAPI(`contents/${p.path}?ref=${BRANCH}`);
         const raw = decodeURIComponent(escape(atob(data.content)));
@@ -296,19 +327,13 @@
       document.getElementById('inp-title').focus();
     }
 
-    // ── save ──
-    async function savePost() {
+    // ── build front matter ──
+    function buildContent() {
       const title = document.getElementById('inp-title').value.trim();
       const tags = document.getElementById('inp-tags').value.trim();
       const categories = document.getElementById('inp-categories').value.trim();
       const body = document.getElementById('editor').value;
-
-      if (!title) return toast('请输入标题', 'error');
-
-      const filename = slugify(title) + '.md';
-      const path = `${POSTS_DIR}/${filename}`;
-
-      // build front matter
+      if (!title) return null;
       const now = new Date();
       const date = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
       let fm = `---\ntitle: ${title}\ndate: ${date}`;
@@ -318,19 +343,41 @@
       }
       if (categories) fm += `\ncategories: ${categories}`;
       fm += `\n---\n`;
+      return { title, filename: slugify(title) + '.md', content: fm + body };
+    }
 
-      const content = fm + body;
+    // ── save ──
+    async function savePost() {
+      const data = buildContent();
+      if (!data) return toast('请输入标题', 'error');
 
-      const isUpdate = currentPost && currentPost.name === filename;
-      const payload = { message: isUpdate ? `update: ${title}` : `new post: ${title}`, content: btoa(unescape(encodeURIComponent(content))), branch: BRANCH };
+      if (isLocal) {
+        // local save: download file
+        downloadFile(data.filename, data.content);
+        // update local post list
+        const idx = posts.findIndex(p => p.name === data.filename);
+        if (idx >= 0) posts[idx].content = data.content;
+        else posts.unshift({ name: data.filename, content: data.content });
+        currentPost = posts.find(p => p.name === data.filename);
+        toast('已导出: ' + data.filename, 'success');
+        document.getElementById('btn-delete').style.display = 'inline-flex';
+        document.getElementById('status').textContent = data.filename;
+        renderPostList();
+        return;
+      }
+
+      // GitHub save
+      const path = `${POSTS_DIR}/${data.filename}`;
+      const isUpdate = currentPost && currentPost.name === data.filename;
+      const payload = { message: isUpdate ? `update: ${data.title}` : `new post: ${data.title}`, content: btoa(unescape(encodeURIComponent(data.content))), branch: BRANCH };
       if (isUpdate) payload.sha = currentPost.sha;
 
       document.getElementById('status').textContent = '保存中...';
       try {
         const res = await ghAPI(`contents/${path}`, { method: 'PUT', body: JSON.stringify(payload) });
-        currentPost = { name: filename, sha: res.content.sha, path };
+        currentPost = { name: data.filename, sha: res.content.sha, path };
         toast('保存成功！', 'success');
-        document.getElementById('status').textContent = filename;
+        document.getElementById('status').textContent = data.filename;
         document.getElementById('btn-delete').style.display = 'inline-flex';
         await loadPosts();
       } catch (e) {
@@ -343,6 +390,14 @@
     async function deletePost() {
       if (!currentPost) return;
       if (!confirm(`确定删除「${currentPost.name}」？`)) return;
+
+      if (isLocal) {
+        posts = posts.filter(p => p.name !== currentPost.name);
+        toast('已移除', 'success');
+        newPost();
+        return;
+      }
+
       document.getElementById('status').textContent = '删除中...';
       try {
         await ghAPI(`contents/${currentPost.path}`, {
@@ -357,13 +412,59 @@
       }
     }
 
+    // ── local import ──
+    function importLocal() {
+      document.getElementById('file-input').click();
+    }
+    function handleImport(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
+      let loaded = 0;
+      files.forEach(f => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const name = f.name;
+          const content = reader.result;
+          const idx = posts.findIndex(p => p.name === name);
+          if (idx >= 0) posts[idx].content = content;
+          else posts.unshift({ name, content });
+          loaded++;
+          if (loaded === files.length) {
+            renderPostList();
+            // open first imported file
+            const firstIdx = posts.findIndex(p => p.name === files[0].name);
+            openPost(firstIdx);
+            toast(`已导入 ${files.length} 个文件`, 'success');
+          }
+        };
+        reader.readAsText(f);
+      });
+      e.target.value = '';
+    }
+
+    // ── local export ──
+    function exportLocal() {
+      const data = buildContent();
+      if (!data) { newPost(); return toast('请输入标题', 'error'); }
+      downloadFile(data.filename, data.content);
+      toast('已下载: ' + data.filename, 'success');
+    }
+
+    function downloadFile(name, content) {
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = name;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
     // ── preview ──
     const editor = document.getElementById('editor');
     editor.addEventListener('input', updatePreview);
     function updatePreview() {
       document.getElementById('preview').innerHTML = marked.parse(editor.value || '');
     }
-    // tab support in editor
     editor.addEventListener('keydown', e => {
       if (e.key === 'Tab') {
         e.preventDefault();
