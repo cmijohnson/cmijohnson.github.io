@@ -166,6 +166,7 @@
       <div class="nav-links">
         <a href="/" class="active">首页</a>
         <a href="/blog/">博客</a>
+        <a href="/editor/">编辑器</a>
         <a href="https://github.com/cmijohnson" target="_blank">GitHub</a>
       </div>
     </div>
@@ -204,13 +205,9 @@
     <div class="ticker" id="ticker">
       <div class="ticker-item"><span class="ticker-num" id="t-repos">—</span> 公开项目</div>
       <div class="ticker-sep">·</div>
-      <div class="ticker-item"><span class="ticker-num" id="t-stars">—</span> Stars</div>
-      <div class="ticker-sep">·</div>
       <div class="ticker-item"><span class="ticker-num" id="t-langs">—</span> 编程语言</div>
       <div class="ticker-sep">·</div>
       <div class="ticker-item"><span class="ticker-num">3</span> 个站点</div>
-      <div class="ticker-sep">·</div>
-      <div class="ticker-item"><span class="ticker-num">5+</span> 年开发经验</div>
     </div>
   </div>
 
@@ -338,10 +335,8 @@
       .then(repos => {
         repos.sort((a, b) => b.stars - a.stars || new Date(b.updated) - new Date(a.updated));
 
-        const stars = repos.reduce((s, r) => s + (r.stars || 0), 0);
         const langs = [...new Set(repos.map(r => r.language).filter(Boolean))];
         document.getElementById('t-repos').textContent = repos.length;
-        document.getElementById('t-stars').textContent = stars;
         document.getElementById('t-langs').textContent = langs.length;
 
         const grid = document.getElementById('project-grid');
