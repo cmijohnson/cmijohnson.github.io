@@ -1,0 +1,64 @@
+# Butterfly Theme Configuration
+# Docs: https://butterfly.js.org/posts/4aa8abbe/
+
+# Menu
+menu:
+  首页: / || fas fa-home
+  归档: /blog/archives/ || fas fa-archive
+  标签: /blog/tags/ || fas fa-tags
+  关于: /blog/about/ || fas fa-heart
+
+# Code Blocks
+highlight_theme: light
+highlight_copy: true
+highlight_lang: true
+code_word_wrap: false
+
+# Social
+social:
+  fab fa-github: https://github.com/cmijohnson || GitHub
+  fas fa-globe: https://www.cmiteam.cn || 个人博客
+
+# Avatar
+avatar: https://github.com/cmijohnson.png
+
+# Favicon
+favicon: https://github.com/cmijohnson.png
+
+# Cover
+index_img:
+default_cover:
+  - /img/default.png
+
+# Disable CDN
+CDN:
+  css:
+    fontawesome: https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css
+  js:
+
+# Footer
+footer:
+  owner:
+    enable: true
+    since: 2025
+  custom_text:
+  copyright: true
+
+# Post
+post_meta:
+  date_type: both
+  categories: true
+  tags: true
+
+toc:
+  enable: true
+  number: true
+
+# Comments (disabled by default)
+comments:
+  use:
+  lazyload: false
+
+# Analytics (disabled by default)
+busuanzi:
+  enable: false

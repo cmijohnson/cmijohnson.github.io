@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cmijohnson · Developer</title>
+  <link rel="icon" href="https://github.com/cmijohnson.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#06060f;--bg2:#0c0c1d;--surface:rgba(255,255,255,.03);
+      --glass:rgba(255,255,255,.05);--glass-border:rgba(255,255,255,.08);
+      --text:#e8ecf4;--text2:#8b95a8;--text3:#505a6e;
+      --blue:#4f8cff;--purple:#a855f7;--green:#34d399;
+      --pink:#ec4899;--orange:#f97316;--cyan:#22d3ee;
+      --radius:16px;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:'Inter','Noto Sans SC',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
+
+    /* ── animated bg ── */
+    .bg-orbs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+    .bg-orbs .orb{position:absolute;border-radius:50%;filter:blur(100px);opacity:.15;animation:float 20s ease-in-out infinite}
+    .bg-orbs .orb:nth-child(1){width:600px;height:600px;background:var(--blue);top:-200px;left:-100px;animation-delay:0s}
+    .bg-orbs .orb:nth-child(2){width:500px;height:500px;background:var(--purple);bottom:-150px;right:-100px;animation-delay:-7s}
+    .bg-orbs .orb:nth-child(3){width:400px;height:400px;background:var(--pink);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-14s}
+    @keyframes float{0%,100%{transform:translate(0,0) scale(1)}25%{transform:translate(50px,-30px) scale(1.05)}50%{transform:translate(-20px,40px) scale(.95)}75%{transform:translate(30px,20px) scale(1.02)}}
+
+    .container{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+
+    /* ── nav ── */
+    nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .3s}
+    nav.scrolled{background:rgba(6,6,15,.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border)}
+    nav .container{display:flex;align-items:center;justify-content:space-between}
+    .nav-logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem}
+    .nav-logo img{width:32px;height:32px;border-radius:50%}
+    .nav-links{display:flex;gap:8px}
+    .nav-links a{padding:8px 16px;border-radius:10px;font-size:.88rem;color:var(--text2);transition:all .2s;font-weight:500}
+    .nav-links a:hover{color:var(--text);background:var(--glass)}
+    .nav-links a.active{color:var(--blue);background:rgba(79,140,255,.1)}
+
+    /* ── hero ── */
+    .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px}
+    .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+    .hero-text .greeting{font-size:.95rem;color:var(--blue);font-weight:600;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase}
+    .hero-text h1{font-size:3.4rem;font-weight:800;line-height:1.15;margin-bottom:8px}
+    .hero-text h1 .gradient{background:linear-gradient(135deg,var(--blue),var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-size:200% 200%;animation:gradientShift 4s ease-in-out infinite}
+    @keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .hero-text .role{font-size:1.2rem;color:var(--text2);margin:16px 0 24px}
+    .hero-text .desc{font-size:.95rem;color:var(--text3);max-width:460px;line-height:1.8}
+    .hero-btns{display:flex;gap:12px;margin-top:32px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 24px;border-radius:12px;font-size:.9rem;font-weight:600;transition:all .25s;border:none;cursor:pointer;font-family:inherit}
+    .btn-primary{background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;box-shadow:0 4px 20px rgba(79,140,255,.25)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(79,140,255,.35)}
+    .btn-ghost{background:var(--glass);color:var(--text);border:1px solid var(--glass-border)}
+    .btn-ghost:hover{background:rgba(255,255,255,.08);transform:translateY(-2px)}
+
+    .hero-visual{display:flex;justify-content:center;align-items:center;position:relative}
+    .hero-avatar{width:280px;height:280px;border-radius:50%;position:relative}
+    .hero-avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:3px solid rgba(79,140,255,.3)}
+    .hero-avatar::before{content:'';position:absolute;inset:-8px;border-radius:50%;border:2px dashed rgba(79,140,255,.2);animation:spin 30s linear infinite}
+    .hero-avatar::after{content:'';position:absolute;inset:-20px;border-radius:50%;border:1px dashed rgba(168,85,247,.15);animation:spin 50s linear infinite reverse}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .floating-cards{position:absolute;inset:0;pointer-events:none}
+    .fc{position:absolute;background:var(--glass);backdrop-filter:blur(12px);border:1px solid var(--glass-border);border-radius:12px;padding:10px 16px;font-size:.8rem;display:flex;align-items:center;gap:8px;animation:floatCard 6s ease-in-out infinite;white-space:nowrap}
+    .fc:nth-child(1){top:10%;right:-10%;animation-delay:0s}
+    .fc:nth-child(2){bottom:15%;left:-15%;animation-delay:-2s}
+    .fc:nth-child(3){top:50%;right:-20%;animation-delay:-4s}
+    @keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+    /* ── section common ── */
+    section{padding:80px 0}
+    .section-header{text-align:center;margin-bottom:48px}
+    .section-header h2{font-size:2rem;font-weight:700;margin-bottom:8px}
+    .section-header p{color:var(--text2);font-size:.95rem}
+    .section-header .line{width:48px;height:3px;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;margin:16px auto 0}
+
+    /* ── sites ── */
+    .site-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+    .site-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:32px 28px;transition:all .3s;position:relative;overflow:hidden;cursor:pointer}
+    .site-card::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity .3s}
+    .site-card:nth-child(1)::before{background:radial-gradient(circle at 30% 30%,rgba(79,140,255,.1),transparent 60%)}
+    .site-card:nth-child(2)::before{background:radial-gradient(circle at 30% 30%,rgba(168,85,247,.1),transparent 60%)}
+    .site-card:nth-child(3)::before{background:radial-gradient(circle at 30% 30%,rgba(52,211,153,.1),transparent 60%)}
+    .site-card:hover::before{opacity:1}
+    .site-card:hover{transform:translateY(-4px);border-color:rgba(255,255,255,.12)}
+    .site-icon{font-size:2rem;margin-bottom:16px}
+    .site-card h3{font-size:1.15rem;font-weight:600;margin-bottom:6px}
+    .site-card .site-url{font-size:.82rem;color:var(--text3);margin-bottom:12px;font-family:'SF Mono',Consolas,monospace}
+    .site-card .site-desc{font-size:.88rem;color:var(--text2);line-height:1.6}
+    .site-card .site-arrow{position:absolute;right:24px;top:28px;font-size:1.1rem;color:var(--text3);transition:all .3s}
+    .site-card:hover .site-arrow{color:var(--blue);transform:translate(3px,-3px)}
+
+    /* ── projects ── */
+    .project-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+    .project-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;transition:all .3s}
+    .project-card:hover{transform:translateY(-3px);border-color:rgba(79,140,255,.2);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    .project-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+    .project-name{font-size:1rem;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:8px}
+    .project-name i{font-size:.9rem;opacity:.5}
+    .project-stars{font-size:.8rem;color:var(--orange);display:flex;align-items:center;gap:4px;flex-shrink:0}
+    .project-desc{font-size:.87rem;color:var(--text2);line-height:1.7;flex:1;margin-bottom:16px}
+    .project-meta{display:flex;gap:16px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px solid var(--glass-border)}
+    .project-meta .tag{font-size:.78rem;padding:3px 10px;border-radius:6px;font-weight:500}
+    .project-meta .date{font-size:.78rem;color:var(--text3)}
+
+    /* ── tech ── */
+    .tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+    .tech-item{background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;padding:18px 14px;text-align:center;transition:all .25s}
+    .tech-item:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.12)}
+    .tech-item .dot{width:10px;height:10px;border-radius:50%;margin:0 auto 10px}
+    .tech-item .name{font-size:.85rem;font-weight:600}
+    .tech-item .cat{font-size:.72rem;color:var(--text3);margin-top:4px}
+
+    /* ── footer ── */
+    footer{padding:60px 0 30px;border-top:1px solid var(--glass-border);text-align:center}
+    .footer-links{display:flex;justify-content:center;gap:24px;margin-bottom:16px;flex-wrap:wrap}
+    .footer-links a{color:var(--text2);font-size:.88rem;display:flex;align-items:center;gap:6px;transition:color .2s}
+    .footer-links a:hover{color:var(--blue)}
+    .footer-copy{color:var(--text3);font-size:.78rem}
+
+    /* ── loading ── */
+    .skeleton{background:linear-gradient(90deg,var(--glass) 25%,rgba(255,255,255,.06) 50%,var(--glass) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* ── responsive ── */
+    @media(max-width:900px){
+      .hero-inner{grid-template-columns:1fr;text-align:center}
+      .hero-text h1{font-size:2.4rem}
+      .hero-text .desc{margin:0 auto}
+      .hero-btns{justify-content:center}
+      .hero-visual{margin-top:40px}
+      .hero-avatar{width:200px;height:200px}
+      .site-grid{grid-template-columns:1fr}
+      .project-grid{grid-template-columns:1fr}
+      .nav-links{display:none}
+    }
+    @media(max-width:600px){
+      .hero-text h1{font-size:1.9rem}
+      .tech-grid{grid-template-columns:repeat(3,1fr)}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orbs">
+    <div class="orb"></div><div class="orb"></div><div class="orb"></div>
+  </div>
+
+  <nav id="nav">
+    <div class="container">
+      <a href="/" class="nav-logo">
+        <img src="https://github.com/cmijohnson.png" alt="">
+        <span>cmijohnson</span>
+      </a>
+      <div class="nav-links">
+        <a href="/" class="active">首页</a>
+        <a href="/blog/">博客</a>
+        <a href="https://github.com/cmijohnson" target="_blank">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-inner">
+        <div class="hero-text">
+          <div class="greeting">Hello, World! 👋</div>
+          <h1>I'm <span class="gradient">cmijohnson</span></h1>
+          <p class="role">Full-Stack Developer · 江苏大学</p>
+          <p class="desc">热爱构建有趣的产品，专注 Vue + Python 全栈开发。从团队协作到校园工具，用代码解决真实问题。</p>
+          <div class="hero-btns">
+            <a href="#projects" class="btn btn-primary"><i class="fas fa-code"></i> 查看项目</a>
+            <a href="/blog/" class="btn btn-ghost"><i class="fas fa-pen"></i> 阅读博客</a>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="hero-avatar">
+            <img src="https://github.com/cmijohnson.png" alt="cmijohnson">
+          </div>
+          <div class="floating-cards">
+            <div class="fc"><i class="fab fa-vuejs" style="color:#42b883"></i> Vue 3</div>
+            <div class="fc"><i class="fab fa-python" style="color:#3572A5"></i> Python</div>
+            <div class="fc"><i class="fab fa-js" style="color:#f1e05a"></i> JavaScript</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SITES -->
+  <section id="sites">
+    <div class="container">
+      <div class="section-header">
+        <h2>我的站点</h2>
+        <p>更多内容请访问我的其他平台</p>
+        <div class="line"></div>
+      </div>
+      <div class="site-grid">
+        <a class="site-card" href="https://www.cmiteam.cn" target="_blank">
+          <div class="site-icon"></div>
+          <h3>个人博客</h3>
+          <div class="site-url">www.cmiteam.cn</div>
+          <div class="site-desc">技术文章、学习笔记与生活感悟的分享平台</div>
+          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+        </a>
+        <a class="site-card" href="https://www.cmiteam.top" target="_blank">
+          <div class="site-icon"></div>
+          <h3>导航站</h3>
+          <div class="site-url">www.cmiteam.top</div>
+          <div class="site-desc">精选实用工具与资源聚合，高效上网从这里开始</div>
+          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+        </a>
+        <a class="site-card" href="https://ujs.cmiteam.cn" target="_blank">
+          <div class="site-icon"></div>
+          <h3>江大导航</h3>
+          <div class="site-url">ujs.cmiteam.cn</div>
+          <div class="site-desc">江苏大学专属校园导航，一站式获取校内资源</div>
+          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="container">
+      <div class="section-header">
+        <h2>GitHub 项目</h2>
+        <p>所有公开仓库，按活跃度排序</p>
+        <div class="line"></div>
+      </div>
+      <div class="project-grid" id="project-grid">
+        <div class="project-card" style="align-items:center;justify-content:center">
+          <div class="skeleton" style="width:80%;height:16px;margin-bottom:12px"></div>
+          <div class="skeleton" style="width:60%;height:12px"></div>
+        </div>
+        <div class="project-card" style="align-items:center;justify-content:center">
+          <div class="skeleton" style="width:70%;height:16px;margin-bottom:12px"></div>
+          <div class="skeleton" style="width:50%;height:12px"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TECH -->
+  <section id="tech">
+    <div class="container">
+      <div class="section-header">
+        <h2>技术栈</h2>
+        <p>日常开发中使用的主要工具</p>
+        <div class="line"></div>
+      </div>
+      <div class="tech-grid">
+        <div class="tech-item"><div class="dot" style="background:#42b883"></div><div class="name">Vue 3</div><div class="cat">Frontend</div></div>
+        <div class="tech-item"><div class="dot" style="background:#646cff"></div><div class="name">Vite</div><div class="cat">Build</div></div>
+        <div class="tech-item"><div class="dot" style="background:#3572A5"></div><div class="name">Python</div><div class="cat">Backend</div></div>
+        <div class="tech-item"><div class="dot" style="background:#009688"></div><div class="name">FastAPI</div><div class="cat">API</div></div>
+        <div class="tech-item"><div class="dot" style="background:#18a058"></div><div class="name">Naive UI</div><div class="cat">UI Kit</div></div>
+        <div class="tech-item"><div class="dot" style="background:#f1e05a"></div><div class="name">JavaScript</div><div class="cat">Language</div></div>
+        <div class="tech-item"><div class="dot" style="background:#ffd859"></div><div class="name">Pinia</div><div class="cat">State</div></div>
+        <div class="tech-item"><div class="dot" style="background:#00ADD8"></div><div class="name">Axios</div><div class="cat">HTTP</div></div>
+        <div class="tech-item"><div class="dot" style="background:#e0234e"></div><div class="name">Hexo</div><div class="cat">Blog</div></div>
+        <div class="tech-item"><div class="dot" style="background:#2496ED"></div><div class="name">Docker</div><div class="cat">DevOps</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-links">
+        <a href="https://github.com/cmijohnson" target="_blank"><i class="fab fa-github"></i> GitHub</a>
+        <a href="/blog/"><i class="fas fa-pen-nib"></i> 博客</a>
+        <a href="https://www.cmiteam.cn" target="_blank"><i class="fas fa-globe"></i> cmiteam.cn</a>
+        <a href="https://www.cmiteam.top" target="_blank"><i class="fas fa-compass"></i> 导航站</a>
+        <a href="https://ujs.cmiteam.cn" target="_blank"><i class="fas fa-graduation-cap"></i> 江大导航</a>
+      </div>
+      <div class="footer-copy">© 2025-2026 cmijohnson. Crafted with ❤️</div>
+    </div>
+  </footer>
+
+  <script>
+    // nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        e.preventDefault();
+        const t = document.querySelector(a.getAttribute('href'));
+        if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // load projects from GitHub API
+    const LANG_COLORS = {
+      JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#3572A5',PHP:'#4F5D95',
+      Java:'#b07219',HTML:'#e34c26',CSS:'#563d7c',Go:'#00ADD8',Shell:'#89e051'
+    };
+    const LANG_TAG_BG = {
+      JavaScript:'rgba(241,224,90,.12)',TypeScript:'rgba(49,120,198,.12)',Python:'rgba(53,114,165,.12)',
+      PHP:'rgba(79,93,149,.12)',HTML:'rgba(227,76,38,.12)',CSS:'rgba(86,61,124,.12)',
+      Go:'rgba(0,173,216,.12)',Shell:'rgba(137,224,81,.12)',Java:'rgba(176,114,25,.12)'
+    };
+    const LANG_TAG_FG = {
+      JavaScript:'#f1e05a',TypeScript:'#3178c6',Python:'#6db3f2',PHP:'#8b9ed4',
+      HTML:'#f06529',CSS:'#9b72cf',Go:'#00ADD8',Shell:'#89e051',Java:'#b07219'
+    };
+    const SKIP = ['cmijohnson.github.io'];
+
+    fetch('https://api.github.com/users/cmijohnson/repos?per_page=100&sort=updated')
+      .then(r => r.json())
+      .then(repos => {
+        const filtered = repos
+          .filter(r => !r.fork && !r.private && !SKIP.includes(r.name))
+          .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at));
+
+        const grid = document.getElementById('project-grid');
+        grid.innerHTML = filtered.map(r => {
+          const lang = r.language || '';
+          const tagBg = LANG_TAG_BG[lang] || 'rgba(255,255,255,.06)';
+          const tagFg = LANG_TAG_FG[lang] || '#8b95a8';
+          return `
+            <a class="project-card" href="${r.html_url}" target="_blank" rel="noopener">
+              <div class="project-top">
+                <span class="project-name"><i class="far fa-folder"></i> ${esc(r.name)}</span>
+                ${r.stargazers_count ? `<span class="project-stars">★ ${r.stargazers_count}</span>` : ''}
+              </div>
+              <div class="project-desc">${esc(r.description || '暂无描述')}</div>
+              <div class="project-meta">
+                ${lang ? `<span class="tag" style="background:${tagBg};color:${tagFg}">${esc(lang)}</span>` : ''}
+                <span class="date">${new Date(r.pushed_at).toLocaleDateString('zh-CN')}</span>
+              </div>
+            </a>`;
+        }).join('');
+      })
+      .catch(() => {
+        document.getElementById('project-grid').innerHTML =
+          '<p style="text-align:center;color:var(--text3);grid-column:1/-1;padding:40px">加载失败，请访问 <a href="https://github.com/cmijohnson" style="color:var(--blue)">GitHub</a> 查看</p>';
+      });
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+  </script>
+</body>
+</html>
