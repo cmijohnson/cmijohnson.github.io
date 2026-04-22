@@ -5,8 +5,8 @@
 menu:
   首页: / || fas fa-home
   归档: /blog/archives/ || fas fa-archive
-  标签: /blog/tags/ || fas fa-tags
-  关于: /blog/about/ || fas fa-heart
+  标签: /tags/ || fas fa-tags
+  关于: /about/ || fas fa-heart
 
 # Code Blocks
 highlight_theme: light
@@ -30,10 +30,10 @@ index_img:
 default_cover:
   - /img/default.png
 
-# Disable CDN
+# CDN
 CDN:
   css:
-    fontawesome: https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css
+    fontawesome: https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css
   js:
 
 # Footer

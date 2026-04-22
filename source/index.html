@@ -43,7 +43,7 @@
     .nav-links a.active{color:var(--blue);background:rgba(79,140,255,.1)}
 
     /* ── hero ── */
-    .hero{min-height:100vh;display:flex;align-items:center;padding:120px 0 80px}
+    .hero{min-height:75vh;display:flex;align-items:center;padding:110px 0 50px}
     .hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
     .hero-text .greeting{font-size:.95rem;color:var(--blue);font-weight:600;margin-bottom:12px;letter-spacing:1px;text-transform:uppercase}
     .hero-text h1{font-size:3.4rem;font-weight:800;line-height:1.15;margin-bottom:8px}
@@ -126,6 +126,13 @@
     .skeleton{background:linear-gradient(90deg,var(--glass) 25%,rgba(255,255,255,.06) 50%,var(--glass) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+    /* ── ticker ── */
+    .ticker-wrap{padding:20px 0;position:relative;z-index:1;overflow:hidden}
+    .ticker{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
+    .ticker-item{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text2)}
+    .ticker-num{font-size:1.1rem;font-weight:700;color:var(--text)}
+    .ticker-sep{color:var(--text3);font-size:1.2rem}
+
     /* ── responsive ── */
     @media(max-width:900px){
       .hero-inner{grid-template-columns:1fr;text-align:center}
@@ -191,6 +198,21 @@
       </div>
     </div>
   </section>
+
+  <!-- STATS TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div class="ticker-item"><span class="ticker-num" id="t-repos">—</span> 公开项目</div>
+      <div class="ticker-sep">·</div>
+      <div class="ticker-item"><span class="ticker-num" id="t-stars">—</span> Stars</div>
+      <div class="ticker-sep">·</div>
+      <div class="ticker-item"><span class="ticker-num" id="t-langs">—</span> 编程语言</div>
+      <div class="ticker-sep">·</div>
+      <div class="ticker-item"><span class="ticker-num">3</span> 个站点</div>
+      <div class="ticker-sep">·</div>
+      <div class="ticker-item"><span class="ticker-num">5+</span> 年开发经验</div>
+    </div>
+  </div>
 
   <!-- SITES -->
   <section id="sites">
@@ -322,6 +344,13 @@
         const filtered = repos
           .filter(r => !r.fork && !r.private && !SKIP.includes(r.name))
           .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at));
+
+        // update ticker
+        const stars = filtered.reduce((s, r) => s + r.stargazers_count, 0);
+        const langs = [...new Set(filtered.map(r => r.language).filter(Boolean))];
+        document.getElementById('t-repos').textContent = filtered.length;
+        document.getElementById('t-stars').textContent = stars;
+        document.getElementById('t-langs').textContent = langs.length;
 
         const grid = document.getElementById('project-grid');
         grid.innerHTML = filtered.map(r => {
