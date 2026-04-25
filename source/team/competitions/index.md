@@ -1,8 +1,3 @@
----
-title: 竞赛成果
-date: 2026-04-22 00:00:00
-comments: false
----
 
 <div class="team-section">
 <h2 class="team-section-title">竞赛荣誉</h2>
@@ -13,13 +8,13 @@ comments: false
 <a href="/blog/2023/10/15/national-ctf-2023/" class="team-card-link">
 <div class="team-comp-card">
 <div class="team-comp-image orange-grad">
-<span class="team-comp-badge">一等奖</span>
+<span class="team-comp-badge">暂无</span>
 <i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
 </div>
 <div class="team-comp-content">
-<div class="date">2023 年 10 月</div>
-<h3>全国大学生信息安全竞赛</h3>
-<p>在全国总决赛中表现出色，荣获全国一等奖。该赛事是国内信息安全领域最具权威性的学科竞赛之一，涵盖 Web 安全、密码学、逆向工程、取证分析等多个方向。</p>
+<div class="date">日期待定</div>
+<h3>暂无</h3>
+<p>暂无</p>
 </div>
 </div>
 </a>
@@ -27,13 +22,13 @@ comments: false
 <a href="/blog/2023/06/20/xctf-2023/" class="team-card-link">
 <div class="team-comp-card reverse">
 <div class="team-comp-image blue-grad">
-<span class="team-comp-badge">分站赛亚军</span>
+<span class="team-comp-badge">暂无</span>
 <i class="fas fa-medal" style="font-size:4rem;color:#2563eb;opacity:.3"></i>
 </div>
 <div class="team-comp-content">
-<div class="date">2023 年 6 月</div>
-<h3>XCTF 国际网络安全联赛</h3>
-<p>在 XCTF 联赛分站赛中取得亚军成绩。XCTF 联赛是亚太地区规模最大的 CTF 竞赛系列，团队在 Web 安全和二进制漏洞利用方向表现突出。</p>
+<div class="date">日期待定</div>
+<h3>赛事待定</h3>
+<p>介绍待定</p>
 </div>
 </div>
 </a>
