@@ -315,6 +315,7 @@
     let dataStore = {}; // { key: [...] }
     let dataEditing = null; // { typeKey, index } or null
     let groupState = {}; // { groupName: true/false } for collapsed
+    let currentFrontMatter = ''; // original front matter string for pages
 
     let token = localStorage.getItem('gh_token') || '';
     let isLocal = false;
@@ -542,8 +543,10 @@
 
     function parseFrontMatter(raw) {
       let title = '', tags = '', categories = '', status = 'published', body = raw;
-      const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+      currentFrontMatter = '';
+      const fmMatch = raw.match(/^(---\n[\s\S]*?\n---)\n?([\s\S]*)$/);
       if (fmMatch) {
+        currentFrontMatter = fmMatch[1] + '\n';
         body = fmMatch[2];
         const fm = fmMatch[1];
         const t = fm.match(/title:\s*(.+)/);
@@ -598,11 +601,17 @@
 
       // page mode: save with original front matter intact
       if (currentTab === 'pages' && currentPage) {
+        let content;
+        if (currentFrontMatter) {
+          content = currentFrontMatter + body;
+        } else {
+          content = body;
+        }
         return {
           title,
           filename: currentPage.path.split('/').pop(),
           path: currentPage.path,
-          content: body,
+          content: content,
           isPage: true
         };
       }
