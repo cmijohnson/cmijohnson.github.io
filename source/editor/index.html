@@ -654,7 +654,7 @@
 
       // page mode save (GitHub)
       if (data.isPage && !isLocal) {
-        if (!currentPage || !currentPage.sha) return toast('请先打开一个页面', 'error');
+        if (!currentPage || !currentPage.sha) return toast('请先点击左侧页面列表打开一个页面后再保存', 'error');
         const payload = {
           message: `update: ${data.title}`,
           content: btoa(unescape(encodeURIComponent(data.content))),

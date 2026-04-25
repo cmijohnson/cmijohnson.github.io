@@ -79,3 +79,4 @@ inject:
     - <link rel="stylesheet" href="/css/custom.css">
     - <link rel="stylesheet" href="/css/team.css">
   bottom:
+    - <script>document.addEventListener('DOMContentLoaded',function(){var m=document.querySelector('meta[name="author"]'),e=document.getElementById('post-meta');if(m&&e&&m.content!=='cmijohnson'){var d=document.createElement('div');d.style.cssText='display:flex;align-items:center;gap:6px;margin-top:8px;font-size:.85rem';d.innerHTML='<i class="fas fa-user-pen" style="color:#64748b"></i><span>作者：'+m.content+'</span>';e.appendChild(d)}})</script>
