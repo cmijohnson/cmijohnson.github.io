@@ -202,10 +202,10 @@
     const PAGES = [
       { name: '研究', icon: 'fas fa-flask', path: 'source/research/index.md' },
       { name: '团队', icon: 'fas fa-shield-halved', path: 'source/team/index.md' },
-      { name: '团队风采', icon: 'fas fa-users', path: 'source/team/members.md' },
-      { name: '竞赛成果', icon: 'fas fa-trophy', path: 'source/team/competitions.md' },
-      { name: '科研项目', icon: 'fas fa-flask', path: 'source/team/research.md' },
-      { name: '指导教师', icon: 'fas fa-chalkboard-teacher', path: 'source/team/advisors.md' },
+      { name: '团队风采', icon: 'fas fa-users', path: 'source/team/members/index.md' },
+      { name: '竞赛成果', icon: 'fas fa-trophy', path: 'source/team/competitions/index.md' },
+      { name: '科研项目', icon: 'fas fa-flask', path: 'source/team/research/index.md' },
+      { name: '指导教师', icon: 'fas fa-chalkboard-teacher', path: 'source/team/advisors/index.md' },
       { name: '关于', icon: 'fas fa-user-graduate', path: 'source/about/index.md' },
       { name: '公告', icon: 'fas fa-bullhorn', path: 'source/announcements/index.md' }
     ];
@@ -639,7 +639,7 @@
 
     // ── templates ──
     const TEMPLATES = {
-      'source/team/members.md': [
+      'source/team/members/index.md': [
         { label: '成员卡片', icon: 'fas fa-user',
           code: `    <div class="team-member-card">
       <div class="team-member-avatar">姓</div>
@@ -657,7 +657,7 @@
       </div>
     </div>` }
       ],
-      'source/team/competitions.md': [
+      'source/team/competitions/index.md': [
         { label: '竞赛卡片', icon: 'fas fa-trophy',
           code: `    <div class="team-comp-card">
       <div class="team-comp-image orange-grad">
@@ -681,7 +681,7 @@
       </div>
     </div>` }
       ],
-      'source/team/research.md': [
+      'source/team/research/index.md': [
         { label: '项目卡片', icon: 'fas fa-flask',
           code: `    <div class="team-research-card">
       <div class="team-research-image green-grad">
@@ -698,7 +698,7 @@
       </div>
     </div>` }
       ],
-      'source/team/advisors.md': [
+      'source/team/advisors/index.md': [
         { label: '教师卡片', icon: 'fas fa-chalkboard-teacher',
           code: `    <div class="team-advisor-card">
       <div class="team-advisor-avatar">
