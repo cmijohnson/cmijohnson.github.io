@@ -10,7 +10,6 @@ comments: false
 <div class="team-accent-bar team-accent-bar--green"></div>
 
 <div class="team-research-grid">
-<a href="/blog/2024/03/01/blockchain-iot-auth/" class="team-card-link">
 <div class="team-research-card">
 <div class="team-research-image green-grad">
 <i class="fas fa-link" style="font-size:3rem;color:#16a34a;opacity:.4"></i>
@@ -22,7 +21,6 @@ comments: false
 <p>MAS动态权限有关。</p>
 </div>
 </div>
-</a>
 </div>
 </div>
 

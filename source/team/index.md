@@ -37,17 +37,6 @@ comments: false
 <div class="team-accent-bar team-accent-bar--blue"></div>
 
 <div class="team-news-grid">
-<a href="/blog/2023/10/15/national-ctf-2023/" class="team-card-link">
-<div class="team-news-card">
-<div class="team-news-image blue-grad3">
-<i class="fas fa-trophy" style="font-size:3rem;color:#2563eb;opacity:.5"></i>
-</div>
-<div class="team-news-body">
-<div class="date">2023-10-15</div>
-<h4>全国大学生信息安全竞赛一等奖</h4>
-</div>
-</div>
-</a>
 
 </div>
 </div>
