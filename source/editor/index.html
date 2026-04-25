@@ -28,7 +28,8 @@
     /* ── layout ── */
     .app{display:none;height:100vh}
     .sidebar{width:280px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;height:100vh;overflow:hidden}
-    .sidebar-head{padding:16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .sidebar-head{padding:16px;border-bottom:1px solid var(--border)}
+    .sidebar-head .top-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     .sidebar-head h3{font-size:.95rem;font-weight:600}
     .btn{padding:8px 14px;border-radius:8px;border:none;font-size:.82rem;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
     .btn-blue{background:var(--blue);color:#fff}
@@ -39,12 +40,20 @@
     .btn-red:hover{opacity:.85}
     .btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border)}
     .btn-ghost:hover{background:var(--surface);color:var(--text)}
+
+    /* ── sidebar tabs ── */
+    .sidebar-tabs{display:flex;gap:4px}
+    .sidebar-tabs .tab{flex:1;padding:7px 0;text-align:center;font-size:.82rem;font-weight:600;cursor:pointer;border-radius:8px;border:1px solid transparent;color:var(--text2);transition:all .15s}
+    .sidebar-tabs .tab:hover{color:var(--text);background:var(--surface)}
+    .sidebar-tabs .tab.active{color:var(--blue);border-color:var(--blue);background:rgba(79,140,255,.08)}
+
     .post-list{flex:1;overflow-y:auto;padding:8px}
     .post-item{padding:12px;border-radius:8px;cursor:pointer;margin-bottom:4px;transition:background .15s}
     .post-item:hover{background:var(--surface)}
     .post-item.active{background:var(--surface);border:1px solid var(--blue)}
     .post-item .title{font-size:.88rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .post-item .meta{font-size:.75rem;color:var(--text2);margin-top:4px}
+    .post-item .page-icon{margin-right:6px;font-size:.8rem;color:var(--blue)}
 
     .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
     .toolbar{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -99,7 +108,7 @@
   <div class="gate" id="gate">
     <div class="gate-box">
       <h2>博客编辑器</h2>
-      <p>管理 Hexo 博客文章</p>
+      <p>管理 Hexo 博客文章与页面</p>
       <input type="password" id="token-input" placeholder="GitHub Personal Access Token">
       <button onclick="saveToken()">GitHub 模式</button>
       <div style="margin:16px 0;display:flex;align-items:center;gap:12px">
@@ -120,8 +129,14 @@
     <!-- sidebar -->
     <div class="sidebar">
       <div class="sidebar-head">
-        <h3>文章列表</h3>
-        <button class="btn btn-blue" onclick="newPost()"><i class="fas fa-plus"></i> 新建</button>
+        <div class="top-row">
+          <h3 id="sidebar-title">文章列表</h3>
+          <button class="btn btn-blue" onclick="newPost()" id="btn-new"><i class="fas fa-plus"></i> 新建</button>
+        </div>
+        <div class="sidebar-tabs" id="sidebar-tabs">
+          <div class="tab active" data-tab="posts" onclick="switchTab('posts')">文章</div>
+          <div class="tab" data-tab="pages" onclick="switchTab('pages')">页面</div>
+        </div>
       </div>
       <div class="post-list" id="post-list">
         <div style="padding:20px;text-align:center;color:var(--text2);font-size:.85rem">加载中...</div>
@@ -142,16 +157,16 @@
         <span class="status" id="status"></span>
       </div>
 
-      <div class="meta-bar">
+      <div class="meta-bar" id="meta-bar">
         <div class="field">
           <label>标题</label>
           <input type="text" id="inp-title" placeholder="文章标题" style="width:260px">
         </div>
-        <div class="field">
+        <div class="field" id="field-tags">
           <label>标签</label>
           <input type="text" id="inp-tags" placeholder="标签1, 标签2" style="width:180px">
         </div>
-        <div class="field">
+        <div class="field" id="field-categories">
           <label>分类</label>
           <input type="text" id="inp-categories" placeholder="分类名" style="width:120px">
         </div>
@@ -178,10 +193,19 @@
     const BRANCH = 'main';
     const POSTS_DIR = 'source/_posts';
 
+    // ── page definitions ──
+    const PAGES = [
+      { name: '研究', icon: 'fas fa-flask', path: 'source/research/index.md' },
+      { name: '关于', icon: 'fas fa-user-graduate', path: 'source/about/index.md' },
+      { name: '公告', icon: 'fas fa-bullhorn', path: 'source/announcements/index.md' }
+    ];
+
     let token = localStorage.getItem('gh_token') || '';
     let isLocal = false;
     let posts = [];
     let currentPost = null; // {name, sha, path} for GitHub, {name, content} for local
+    let currentTab = 'posts'; // 'posts' | 'pages'
+    let currentPage = null; // page definition from PAGES when in page mode
 
     // ── mode entry ──
     if (token) initApp();
@@ -210,12 +234,81 @@
     async function initApp() {
       document.getElementById('gate').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
-      // toggle local buttons
       document.getElementById('btn-import').style.display = isLocal ? 'inline-flex' : 'none';
       document.getElementById('btn-export').style.display = isLocal ? 'inline-flex' : 'none';
       document.getElementById('sep-local').style.display = isLocal ? 'block' : 'none';
-      if (!isLocal) await loadPosts();
-      else { posts = []; renderPostList(); }
+      switchTab('posts');
+    }
+
+    // ── tab switching ──
+    function switchTab(tab) {
+      currentTab = tab;
+      // update tab UI
+      document.querySelectorAll('.sidebar-tabs .tab').forEach(el => {
+        el.classList.toggle('active', el.dataset.tab === tab);
+      });
+
+      if (tab === 'posts') {
+        document.getElementById('sidebar-title').textContent = '文章列表';
+        document.getElementById('btn-new').style.display = 'inline-flex';
+        // show tags/categories fields
+        document.getElementById('field-tags').style.display = 'flex';
+        document.getElementById('field-categories').style.display = 'flex';
+        if (!isLocal) loadPosts();
+        else { posts = []; renderPostList(); }
+      } else {
+        document.getElementById('sidebar-title').textContent = '页面管理';
+        document.getElementById('btn-new').style.display = 'none';
+        // hide tags/categories for pages
+        document.getElementById('field-tags').style.display = 'none';
+        document.getElementById('field-categories').style.display = 'none';
+        currentPost = null;
+        currentPage = null;
+        renderPageList();
+      }
+    }
+
+    // ── page list ──
+    function renderPageList() {
+      const el = document.getElementById('post-list');
+      el.innerHTML = PAGES.map((p, i) => {
+        const active = currentPage && currentPage.path === p.path ? 'active' : '';
+        return `<div class="post-item ${active}" onclick="openPage(${i})">
+          <div class="title"><i class="${p.icon} page-icon"></i>${esc(p.name)}</div>
+          <div class="meta">${p.path}</div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── open page ──
+    async function openPage(index) {
+      const page = PAGES[index];
+      currentPage = page;
+      currentPost = null;
+      document.getElementById('status').textContent = '加载中...';
+
+      if (isLocal) {
+        // in local mode, treat pages as empty and let user type
+        document.getElementById('inp-title').value = page.name;
+        document.getElementById('editor').value = '';
+        document.getElementById('preview').innerHTML = '';
+        document.getElementById('btn-delete').style.display = 'none';
+        document.getElementById('status').textContent = page.path;
+        renderPageList();
+        return;
+      }
+
+      try {
+        const data = await ghAPI(`contents/${page.path}?ref=${BRANCH}`);
+        const raw = decodeURIComponent(escape(atob(data.content)));
+        currentPage.sha = data.sha;
+        parseFrontMatter(raw);
+        document.getElementById('btn-delete').style.display = 'none';
+        document.getElementById('status').textContent = page.path;
+        renderPageList();
+      } catch (e) {
+        toast('打开失败: ' + e.message, 'error');
+      }
     }
 
     // ── github api ──
@@ -270,6 +363,7 @@
     async function openPost(index) {
       const p = posts[index];
       currentPost = p;
+      currentPage = null;
       document.getElementById('status').textContent = '加载中...';
 
       if (isLocal) {
@@ -316,6 +410,7 @@
     // ── new post ──
     function newPost() {
       currentPost = null;
+      currentPage = null;
       document.getElementById('inp-title').value = '';
       document.getElementById('inp-tags').value = '';
       document.getElementById('inp-categories').value = '';
@@ -323,7 +418,7 @@
       document.getElementById('preview').innerHTML = '';
       document.getElementById('btn-delete').style.display = 'none';
       document.getElementById('status').textContent = '新建文章';
-      renderPostList();
+      if (currentTab === 'posts') renderPostList();
       document.getElementById('inp-title').focus();
     }
 
@@ -334,6 +429,18 @@
       const categories = document.getElementById('inp-categories').value.trim();
       const body = document.getElementById('editor').value;
       if (!title) return null;
+
+      // page mode: save with original front matter intact
+      if (currentTab === 'pages' && currentPage) {
+        return {
+          title,
+          filename: currentPage.path.split('/').pop(),
+          path: currentPage.path,
+          content: body,
+          isPage: true
+        };
+      }
+
       const now = new Date();
       const date = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
       let fm = `---\ntitle: ${title}\ndate: ${date}`;
@@ -343,7 +450,7 @@
       }
       if (categories) fm += `\ncategories: ${categories}`;
       fm += `\n---\n`;
-      return { title, filename: slugify(title) + '.md', content: fm + body };
+      return { title, filename: slugify(title) + '.md', content: fm + body, isPage: false };
     }
 
     // ── save ──
@@ -351,10 +458,37 @@
       const data = buildContent();
       if (!data) return toast('请输入标题', 'error');
 
+      // page mode save (GitHub)
+      if (data.isPage && !isLocal) {
+        if (!currentPage || !currentPage.sha) return toast('请先打开一个页面', 'error');
+        const payload = {
+          message: `update: ${data.title}`,
+          content: btoa(unescape(encodeURIComponent(data.content))),
+          sha: currentPage.sha,
+          branch: BRANCH
+        };
+        document.getElementById('status').textContent = '保存中...';
+        try {
+          const res = await ghAPI(`contents/${currentPage.path}`, { method: 'PUT', body: JSON.stringify(payload) });
+          currentPage.sha = res.content.sha;
+          toast('页面保存成功！', 'success');
+          document.getElementById('status').textContent = currentPage.path;
+        } catch (e) {
+          toast('保存失败: ' + e.message, 'error');
+        }
+        return;
+      }
+
+      // page mode save (local)
+      if (data.isPage && isLocal) {
+        downloadFile(data.path.split('/').pop(), data.content);
+        toast('已导出: ' + data.path, 'success');
+        return;
+      }
+
+      // post save (local)
       if (isLocal) {
-        // local save: download file
         downloadFile(data.filename, data.content);
-        // update local post list
         const idx = posts.findIndex(p => p.name === data.filename);
         if (idx >= 0) posts[idx].content = data.content;
         else posts.unshift({ name: data.filename, content: data.content });
@@ -366,7 +500,7 @@
         return;
       }
 
-      // GitHub save
+      // post save (GitHub)
       const path = `${POSTS_DIR}/${data.filename}`;
       const isUpdate = currentPost && currentPost.name === data.filename;
       const payload = { message: isUpdate ? `update: ${data.title}` : `new post: ${data.title}`, content: btoa(unescape(encodeURIComponent(data.content))), branch: BRANCH };
@@ -431,7 +565,6 @@
           loaded++;
           if (loaded === files.length) {
             renderPostList();
-            // open first imported file
             const firstIdx = posts.findIndex(p => p.name === files[0].name);
             openPost(firstIdx);
             toast(`已导入 ${files.length} 个文件`, 'success');
@@ -446,8 +579,8 @@
     function exportLocal() {
       const data = buildContent();
       if (!data) { newPost(); return toast('请输入标题', 'error'); }
-      downloadFile(data.filename, data.content);
-      toast('已下载: ' + data.filename, 'success');
+      downloadFile(data.filename || data.path.split('/').pop(), data.content);
+      toast('已下载', 'success');
     }
 
     function downloadFile(name, content) {
