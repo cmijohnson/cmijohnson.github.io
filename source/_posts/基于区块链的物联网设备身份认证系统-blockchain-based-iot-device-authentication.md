@@ -1,6 +1,6 @@
 ---
 title: 基于区块链的物联网设备身份认证系统 | Blockchain-based IoT Device Authentication
-date: 2026-04-25 15:17:28
+date: 2026-04-25 15:22:00
 tags: [安全, 区块链, 物联网, 科研]
 categories: 技术
 status: pending
