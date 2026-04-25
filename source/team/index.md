@@ -37,6 +37,17 @@ comments: false
 <div class="team-accent-bar team-accent-bar--blue"></div>
 
 <div class="team-news-grid">
+<a href="/blog/2026/04/22/team-showcase/" class="team-card-link">
+<div class="team-news-card">
+<div class="team-news-image blue-grad3">
+<i class="fas fa-shield-halved" style="font-size:3rem;color:#2563eb;opacity:.5"></i>
+</div>
+<div class="team-news-body">
+<div class="date">2026-04-22</div>
+<h4>团队展示系统正式上线</h4>
+</div>
+</div>
+</a>
 
 </div>
 </div>
