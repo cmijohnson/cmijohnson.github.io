@@ -153,6 +153,7 @@
         <button class="btn btn-ghost" id="btn-export" onclick="exportLocal()" style="display:none"><i class="fas fa-file-export"></i> 导出 .md</button>
         <input type="file" id="file-input" accept=".md,.markdown" style="display:none" onchange="handleImport(event)" multiple>
         <div class="sep"></div>
+        <button class="btn btn-ghost" id="btn-template" onclick="showTemplateMenu(event)" style="display:none"><i class="fas fa-puzzle-piece"></i> 插入模板</button>
         <button class="btn btn-ghost" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出</button>
         <span class="status" id="status"></span>
       </div>
@@ -187,6 +188,10 @@
 
   <div class="toast" id="toast"></div>
 
+  <!-- Template dropdown -->
+  <div id="template-menu" style="display:none;position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px;min-width:200px;z-index:999;box-shadow:0 8px 32px rgba(0,0,0,.4)">
+  </div>
+
   <script>
     const OWNER = 'cmijohnson';
     const REPO = 'cmijohnson.github.io';
@@ -196,6 +201,11 @@
     // ── page definitions ──
     const PAGES = [
       { name: '研究', icon: 'fas fa-flask', path: 'source/research/index.md' },
+      { name: '团队', icon: 'fas fa-shield-halved', path: 'source/team/index.md' },
+      { name: '团队风采', icon: 'fas fa-users', path: 'source/team/members.md' },
+      { name: '竞赛成果', icon: 'fas fa-trophy', path: 'source/team/competitions.md' },
+      { name: '科研项目', icon: 'fas fa-flask', path: 'source/team/research.md' },
+      { name: '指导教师', icon: 'fas fa-chalkboard-teacher', path: 'source/team/advisors.md' },
       { name: '关于', icon: 'fas fa-user-graduate', path: 'source/about/index.md' },
       { name: '公告', icon: 'fas fa-bullhorn', path: 'source/announcements/index.md' }
     ];
@@ -251,6 +261,7 @@
       if (tab === 'posts') {
         document.getElementById('sidebar-title').textContent = '文章列表';
         document.getElementById('btn-new').style.display = 'inline-flex';
+        document.getElementById('btn-template').style.display = 'inline-flex';
         // show tags/categories fields
         document.getElementById('field-tags').style.display = 'flex';
         document.getElementById('field-categories').style.display = 'flex';
@@ -259,6 +270,7 @@
       } else {
         document.getElementById('sidebar-title').textContent = '页面管理';
         document.getElementById('btn-new').style.display = 'none';
+        document.getElementById('btn-template').style.display = 'none';
         // hide tags/categories for pages
         document.getElementById('field-tags').style.display = 'none';
         document.getElementById('field-categories').style.display = 'none';
@@ -293,6 +305,7 @@
         document.getElementById('editor').value = '';
         document.getElementById('preview').innerHTML = '';
         document.getElementById('btn-delete').style.display = 'none';
+        document.getElementById('btn-template').style.display = TEMPLATES[page.path] ? 'inline-flex' : 'none';
         document.getElementById('status').textContent = page.path;
         renderPageList();
         return;
@@ -304,6 +317,7 @@
         currentPage.sha = data.sha;
         parseFrontMatter(raw);
         document.getElementById('btn-delete').style.display = 'none';
+        document.getElementById('btn-template').style.display = TEMPLATES[page.path] ? 'inline-flex' : 'none';
         document.getElementById('status').textContent = page.path;
         renderPageList();
       } catch (e) {
@@ -369,6 +383,7 @@
       if (isLocal) {
         parseFrontMatter(p.content);
         document.getElementById('btn-delete').style.display = 'inline-flex';
+        document.getElementById('btn-template').style.display = 'inline-flex';
         document.getElementById('status').textContent = p.name;
         renderPostList();
         return;
@@ -380,6 +395,7 @@
         currentPost.sha = data.sha;
         parseFrontMatter(raw);
         document.getElementById('btn-delete').style.display = 'inline-flex';
+        document.getElementById('btn-template').style.display = 'inline-flex';
         document.getElementById('status').textContent = p.name;
         renderPostList();
       } catch (e) {
@@ -417,6 +433,7 @@
       document.getElementById('editor').value = '';
       document.getElementById('preview').innerHTML = '';
       document.getElementById('btn-delete').style.display = 'none';
+      document.getElementById('btn-template').style.display = 'inline-flex';
       document.getElementById('status').textContent = '新建文章';
       if (currentTab === 'posts') renderPostList();
       document.getElementById('inp-title').focus();
@@ -618,6 +635,168 @@
       el.textContent = msg;
       el.className = 'toast ' + type + ' show';
       setTimeout(() => el.classList.remove('show'), 3000);
+    }
+
+    // ── templates ──
+    const TEMPLATES = {
+      'source/team/members.md': [
+        { label: '成员卡片', icon: 'fas fa-user',
+          code: `    <div class="team-member-card">
+      <div class="team-member-avatar">姓</div>
+      <h3>姓名</h3>
+      <div class="position">职位</div>
+      <div class="bio">简介</div>
+    </div>` },
+        { label: '时间轴事件', icon: 'fas fa-clock',
+          code: `    <div class="team-timeline-item">
+      <div class="team-timeline-dot"></div>
+      <div class="team-timeline-card">
+        <div class="year">2026 年</div>
+        <h4>事件标题</h4>
+        <p>事件描述</p>
+      </div>
+    </div>` }
+      ],
+      'source/team/competitions.md': [
+        { label: '竞赛卡片', icon: 'fas fa-trophy',
+          code: `    <div class="team-comp-card">
+      <div class="team-comp-image orange-grad">
+        <span class="team-comp-badge">奖项</span>
+        <i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+      </div>
+      <div class="team-comp-content">
+        <div class="date">2026 年 X 月</div>
+        <h3>竞赛名称</h3>
+        <p>竞赛描述</p>
+      </div>
+    </div>` },
+        { label: '能力卡片', icon: 'fas fa-star',
+          code: `    <div class="team-research-card">
+      <div class="team-research-image green-grad">
+        <i class="fas fa-icon" style="font-size:3rem;color:#16a34a;opacity:.4"></i>
+      </div>
+      <div class="team-research-body">
+        <h3>方向名称</h3>
+        <p>方向描述</p>
+      </div>
+    </div>` }
+      ],
+      'source/team/research.md': [
+        { label: '项目卡片', icon: 'fas fa-flask',
+          code: `    <div class="team-research-card">
+      <div class="team-research-image green-grad">
+        <i class="fas fa-icon" style="font-size:3rem;color:#16a34a;opacity:.4"></i>
+        <span class="team-research-status status-ongoing">进行中</span>
+      </div>
+      <div class="team-research-body">
+        <h3>项目名称</h3>
+        <div class="date">2026 — 至今</div>
+        <p>项目描述</p>
+        <div class="achievements">
+          <i class="fas fa-check-circle"></i> 已完成成果
+        </div>
+      </div>
+    </div>` }
+      ],
+      'source/team/advisors.md': [
+        { label: '教师卡片', icon: 'fas fa-chalkboard-teacher',
+          code: `    <div class="team-advisor-card">
+      <div class="team-advisor-avatar">
+        <i class="fas fa-user-tie" style="font-size:2.5rem;color:#9333ea;opacity:.6"></i>
+      </div>
+      <div class="team-advisor-info">
+        <h3>教师姓名</h3>
+        <div class="title">所在学院</div>
+        <p>教师简介</p>
+        <div class="fields">
+          <strong>研究方向：</strong>方向1、方向2
+        </div>
+        <div class="contact">
+          <i class="fas fa-envelope"></i>
+          <a href="mailto:email@example.edu.cn">email@example.edu.cn</a>
+        </div>
+      </div>
+    </div>` }
+      ],
+      'source/announcements/index.md': [
+        { label: '公告条目', icon: 'fas fa-bullhorn',
+          code: `### YYYY-MM-DD — 公告标题
+
+公告内容。` }
+      ],
+      '_posts': [
+        { label: '团队文章', icon: 'fas fa-shield-halved',
+          code: `---
+title: "文章标题 | Article Title"
+date: {{date}}
+tags: [安全, 团队项目]
+categories: 技术
+abstract: 摘要内容。
+---
+
+## 摘要 | Abstract
+
+摘要正文。
+
+## 正文 | Content
+
+内容...
+
+## 参考文献 | References
+
+1. 参考文献条目` }
+      ]
+    };
+
+    function showTemplateMenu(e) {
+      const menu = document.getElementById('template-menu');
+      if (menu.style.display === 'block') { menu.style.display = 'none'; return; }
+
+      const key = currentPage ? currentPage.path : '_posts';
+      const items = TEMPLATES[key] || TEMPLATES['_posts'] || [];
+      if (!items.length) return toast('当前页面无可插入模板', 'error');
+
+      menu.innerHTML = items.map((t, i) =>
+        `<div style="padding:8px 12px;border-radius:6px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text)" onmouseover="this.style.background='var(--bg)'" onmouseout="this.style.background='transparent'" onclick="insertTemplate(${i})">
+          <i class="${t.icon}" style="color:var(--blue);width:16px;text-align:center"></i> ${esc(t.label)}
+        </div>`
+      ).join('');
+
+      const rect = e.target.closest('.btn').getBoundingClientRect();
+      menu.style.left = rect.left + 'px';
+      menu.style.top = (rect.bottom + 4) + 'px';
+      menu.style.display = 'block';
+
+      setTimeout(() => {
+        document.addEventListener('click', function close(ev) {
+          if (!menu.contains(ev.target)) { menu.style.display = 'none'; document.removeEventListener('click', close); }
+        });
+      }, 10);
+    }
+
+    function insertTemplate(index) {
+      const key = currentPage ? currentPage.path : '_posts';
+      const items = TEMPLATES[key] || TEMPLATES['_posts'] || [];
+      const tpl = items[index];
+      if (!tpl) return;
+
+      let code = tpl.code;
+      if (key === '_posts') {
+        const now = new Date();
+        const d = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+        code = code.replace('{{date}}', d);
+      }
+
+      const editor = document.getElementById('editor');
+      const start = editor.selectionStart;
+      const before = editor.value.substring(0, start);
+      const after = editor.value.substring(editor.selectionEnd);
+      editor.value = before + (before.endsWith('\n') || !before ? '' : '\n') + code + '\n' + after;
+      editor.focus();
+      editor.selectionStart = editor.selectionEnd = start + code.length + 1;
+      updatePreview();
+      document.getElementById('template-menu').style.display = 'none';
+      toast('模板已插入');
     }
   </script>
 </body>

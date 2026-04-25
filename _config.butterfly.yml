@@ -75,5 +75,7 @@ busuanzi:
 
 # Inject custom CSS
 inject:
-  css:
-    - /css/custom.css
+  head:
+    - <link rel="stylesheet" href="/css/custom.css">
+    - <link rel="stylesheet" href="/css/team.css">
+  bottom:

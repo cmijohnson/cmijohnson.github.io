@@ -20,9 +20,9 @@ tag_dir: blog/tags
 archive_dir: blog/archives
 category_dir: blog/categories
 
-# skip rendering the custom index.html and team SPA
+# skip rendering
 skip_render:
-  - team/**
+  - editor/**
 
 # Writing
 new_post_name: :title.md
