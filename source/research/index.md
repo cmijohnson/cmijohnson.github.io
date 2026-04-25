@@ -1,74 +1,63 @@
----
-title: 研究 | Research
-date: 2026-04-22 14:00:00
-type: research
----
 
-## 研究方向 | Research Interests
+## cmijohnson
 
-本页面概述笔者当前关注的核心研究方向与代表性工作。
+> Undergraduate Researcher · Jiangsu University (江苏大学)
 
----
+信息安全专业学生，专注于AI安全与智能体领域的研究与探索，致力于将前沿技术应用于实际系统的构建与优化，极客和科技前沿尝试者。
 
-### Web 系统工程 | Web Systems Engineering
-
-研究现代 Web 应用的架构设计模式、前后端分离架构下的性能优化策略，以及面向特定业务场景的全栈系统设计方法。
-
-> 核心技术：Vue 3 / React · FastAPI / Express · 微服务架构
-
-**代表性工作：**
-
-- **智链青鸟** — 基于 Vue 3 + FastAPI 的轻量级团队协作系统，采用前后端分离架构，实现了任务管理、团队通信与文档协作功能。系统设计注重模块化与可扩展性。
-- **细米兰阁导航** — 面向大学生群体的轻量级 Web 导航与工具箱平台，探索了信息架构设计与用户体验优化在校园场景中的应用。
+Focused on research and practice in computer science and software engineering, dedicated to applying cutting-edge technologies to the construction and optimization of real-world systems.
 
 ---
 
-### 分布式通信 | Distributed Communication
+### 研究方向 | Research Interests
 
-探索基于 WebRTC 的对等网络（Peer-to-Peer）通信协议，研究 NAT 穿透（STUN/TURN）、安全数据通道建立与实时音视频传输等关键技术问题。
-
-> 核心技术：WebRTC · DataChannel · ICE 协议
-
-**代表性工作：**
-
-- **P2P 局域网聊天** — 基于 Vue + WebRTC 的内网点对点通信工具，实现了无需中心服务器的端到端加密消息传输。项目验证了 WebRTC DataChannel 在局域网环境下的可行性与性能表现。
+- **AI Agent安全** — 智能体安全（多智能体异常检测和动态权限 学习和探索）
+- **网络安全** — 常见的OWASP TOP 10安全漏洞、逻辑漏洞等基础水平技术
+- **云计算基础** —Docker、Kubernetes、redis、服务器运维等（在学习过程中）
+- **Vibe Coding全栈手初级** —通过全流程AI辅助管理，实现中等工程的搭建、测试、部署、上线全流程
 
 ---
 
-### 智能校园系统 | Smart Campus Systems
+### 技术领域 | Technical Expertise
 
-针对高校校园场景下的数字化需求，设计并实现一系列实用工具系统，探索信息技术在教育管理领域的应用模式。
+**前端工程 | Frontend Engineering**
+- Vue 3 / React / Vite
+- Naive UI / Element Plus
+- Pinia / Vue Router / Axios
 
-> 核心技术：Python · Tkinter · PHP · 数据可视化
+**后端开发 | Backend Development**
+- Python / FastAPI / Flask
+- Node.js / Express
+- SQLite / MySQL 
 
-**代表性工作：**
-
-- **JSU 用电查询** — 基于 Python + Tkinter 开发的宿舍用电数据查询工具，为学生提供便捷的电力消费监控能力。
-- **宿舍打印系统** — 基于 PHP 开发的校园内网文件打印管理平台，简化了宿舍场景下的文件打印流程。
-
----
-
-### 桌面应用工程化 | Desktop Application Engineering
-
-研究基于 Web 技术栈构建跨平台桌面应用的工程化方法，包括进程模型设计、原生 API 集成与应用分发机制。
-
-> 核心技术：Electron · React · IPC 通信
-
-**代表性工作：**
-
-- **文件管理器** — 基于 React + Electron 构建的现代化跨平台文件管理器，探索了 Electron 应用在文件系统操作、窗口管理与性能优化方面的最佳实践。
+**系统与工具 | Systems & Tooling**
+- 智网青禾-大学生一站式 个性化成长中心（MAS、DAG、RAG、MCP等多融合多模态学情智能系统）
+- 信息外包Agent
+- 某科技公司学情方案协助Agent
 
 ---
 
-## 技术栈概览 | Technical Stack
+### 代表性工作 | Selected Projects
 
-| 领域 | 技术 |
-|------|------|
-| 前端框架 | Vue 3, React, Vite |
-| UI 组件库 | Naive UI, Element Plus |
-| 后端框架 | FastAPI, Flask, Express |
-| 编程语言 | Python, JavaScript/TypeScript, PHP |
-| 数据库 | SQLite, MySQL |
-| 通信协议 | WebRTC, WebSocket, HTTP/2 |
-| 桌面开发 | Electron |
-| DevOps | Docker, GitHub Actions |
+| 项目 | 描述 | 技术栈 |
+|------|------|--------|
+| 某公司学情方案协助Agent | 基于双AI的学情方案智能体系统 | React + TypeScript + Vite |
+| 智链青鸟 | 基于 Vue 3 + FastAPI 的轻量级团队协作系统 | Vue 3, FastAPI, SQLite |
+| 宿舍打印系统 | 校园内网文件打印管理平台 | PHP, MySQL |
+| JSU 用电查询 | 基于 Python 的宿舍用电数据查询工具 | Python, Tkinter |
+| P2P 局域网聊天 | 基于 WebRTC 的内网点对点通信工具 | Vue, WebRTC |
+| 文件管理器 | 现代化跨平台文件管理器 | React, Electron |
+| 细米兰阁导航 | 面向大学生的轻量级 Web 导航与工具箱 | Vue, Vite |
+
+---
+
+### 学术写作 | Publications & Writing
+
+*本板块将持续更新 — This section will be updated as work progresses.*
+
+---
+
+### 联系方式 | Contact
+
+- GitHub: [@cmijohnson](https://github.com/cmijohnson)
+- Homepage: [cmiteam.cn](https://www.cmiteam.cn)
