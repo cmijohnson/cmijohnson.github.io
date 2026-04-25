@@ -291,6 +291,13 @@
           { key: 'year', label: '时间', type: 'text', required: true },
           { key: 'title', label: '标题', type: 'text', required: true },
           { key: 'description', label: '描述', type: 'textarea' }
+        ]},
+      { key: 'news', name: '最新动态', icon: 'fas fa-newspaper', file: 'source/_data/news.json',
+        fields: [
+          { key: 'date', label: '日期', type: 'text', required: true },
+          { key: 'title', label: '标题', type: 'text', required: true },
+          { key: 'link', label: '链接', type: 'text' },
+          { key: 'icon', label: '图标', type: 'text' }
         ]}
     ];
 
@@ -923,13 +930,19 @@
         competitions: 'source/team/competitions/index.md',
         research: 'source/team/research/index.md',
         advisors: 'source/team/advisors/index.md',
-        timeline: 'source/team/members/index.md'
+        timeline: 'source/team/members/index.md',
+        news: 'source/team/index.md'
       };
       const pagePath = pageMap[key];
       if (!pagePath) return;
 
       // build HTML from data
-      let html = '---\ntitle: ' + ({members:'团队风采',competitions:'竞赛成果',research:'科研项目',advisors:'指导教师',timeline:'团队风采'}[key]) + '\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      let html;
+      if (key === 'news') {
+        html = '---\ntitle: 智链细米安全盾队\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      } else {
+        html = '---\ntitle: ' + ({members:'团队风采',competitions:'竞赛成果',research:'科研项目',advisors:'指导教师',timeline:'团队风采'}[key]) + '\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      }
 
       if (key === 'members') {
         const members = dataStore.members || [];
@@ -972,6 +985,16 @@
         html += '<div class="team-section">\n<h2 class="team-section-title">指导教师</h2>\n<p class="team-section-subtitle">Faculty Advisors</p>\n<div class="team-accent-bar team-accent-bar--orange"></div>\n\n<div class="team-advisor-list">\n';
         advs.forEach(a => {
           html += `<div class="team-advisor-card">\n<div class="team-advisor-avatar">\n<i class="fas fa-user-tie" style="font-size:2.5rem;color:#9333ea;opacity:.6"></i>\n</div>\n<div class="team-advisor-info">\n<h3>${esc(a.name)}</h3>\n<div class="title">${esc(a.title||'')}</div>\n<p>${esc(a.bio||'')}</p>\n<div class="fields"><strong>研究方向：</strong>${esc(a.fields||'')}</div>\n<div class="contact"><i class="fas fa-envelope"></i> <a href="mailto:${esc(a.email||'')}">${esc(a.email||'')}</a></div>\n</div>\n</div>\n\n`;
+        });
+        html += '</div>\n</div>\n';
+      } else if (key === 'news') {
+        const items = dataStore.news || [];
+        html += '<div class="team-banner">\n<h1>智链细米安全盾队</h1>\n<p>Smart · Chain · Fine-grain · Security Shield — 高校网络安全研究团队</p>\n</div>\n\n';
+        html += '<div class="team-intro-card">\n<p>智链细米安全盾队是一支隶属于江苏大学的网络安全研究团队，致力于 Web 安全、二进制分析、区块链安全与云原生安全等前沿方向的研究与实践。团队多次在全国大学生信息安全竞赛、XCTF 联赛等高水平赛事中取得优异成绩，并积极参与科研项目与攻防演练。</p>\n</div>\n\n';
+        html += '<div class="team-quick-nav">\n<a href="/team/members/" class="qn-blue">\n<span class="icon"><i class="fas fa-users"></i></span>\n<span class="label">团队风采</span>\n</a>\n<a href="/team/competitions/" class="qn-orange">\n<span class="icon"><i class="fas fa-trophy"></i></span>\n<span class="label">竞赛成果</span>\n</a>\n<a href="/team/research/" class="qn-green">\n<span class="icon"><i class="fas fa-flask"></i></span>\n<span class="label">科研项目</span>\n</a>\n<a href="/team/advisors/" class="qn-purple">\n<span class="icon"><i class="fas fa-chalkboard-teacher"></i></span>\n<span class="label">指导教师</span>\n</a>\n</div>\n\n';
+        html += '<div class="team-section">\n<h2 class="team-section-title">最新动态</h2>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-news-grid">\n';
+        items.forEach(n => {
+          html += `<a href="${esc(n.link||'#')}" class="team-card-link">\n<div class="team-news-card">\n<div class="team-news-image blue-grad3">\n<i class="${esc(n.icon||'fas fa-newspaper')}" style="font-size:3rem;color:#2563eb;opacity:.5"></i>\n</div>\n<div class="team-news-body">\n<div class="date">${esc(n.date)}</div>\n<h4>${esc(n.title)}</h4>\n</div>\n</div>\n</a>\n\n`;
         });
         html += '</div>\n</div>\n';
       }
