@@ -1147,7 +1147,6 @@
     }
 
     async function saveSiteSettings() {
-      if (!siteSettings._cfgSha || !siteSettings._bfcfgSha) return toast('设置未加载', 'error');
       // Read current form values
       const fields = currentDataType.fields;
       const values = {};
@@ -1156,43 +1155,51 @@
         if (el) values[f.key] = el.value.trim();
       });
       document.getElementById('status').textContent = '保存中...';
-      try {
-        // Fetch current config files
-        const [cfgRes, bfcfgRes] = await Promise.all([
-          ghAPI('contents/_config.yml?ref=' + BRANCH),
-          ghAPI('contents/_config.butterfly.yml?ref=' + BRANCH)
-        ]);
-        let cfgText = decodeURIComponent(escape(atob(cfgRes.content)));
-        let bfcfgText = decodeURIComponent(escape(atob(bfcfgRes.content)));
+      for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+          // Fetch current config files (fresh each attempt)
+          const [cfgRes, bfcfgRes] = await Promise.all([
+            ghAPI('contents/_config.yml?ref=' + BRANCH),
+            ghAPI('contents/_config.butterfly.yml?ref=' + BRANCH)
+          ]);
+          let cfgText = decodeURIComponent(escape(atob(cfgRes.content)));
+          let bfcfgText = decodeURIComponent(escape(atob(bfcfgRes.content)));
 
-        // Apply changes
-        cfgText = yamlSet(cfgText, 'title', values.title || '');
-        cfgText = yamlSet(cfgText, 'subtitle', values.subtitle || '');
-        cfgText = yamlSet(cfgText, 'description', values.siteDescription || '');
-        bfcfgText = yamlSet(bfcfgText, 'aside.card_announcement.content', values.announcement || '');
+          // Apply changes
+          cfgText = yamlSet(cfgText, 'title', values.title || '');
+          cfgText = yamlSet(cfgText, 'subtitle', values.subtitle || '');
+          cfgText = yamlSet(cfgText, 'description', values.siteDescription || '');
+          bfcfgText = yamlSet(bfcfgText, 'aside.card_announcement.content', values.announcement || '');
 
-        // Save both files
-        await Promise.all([
-          ghAPI('contents/_config.yml', { method: 'PUT', body: {
-            message: 'config: update site settings',
-            content: btoa(unescape(encodeURIComponent(cfgText))),
-            sha: cfgRes.sha, branch: BRANCH
-          }}),
-          ghAPI('contents/_config.butterfly.yml', { method: 'PUT', body: {
-            message: 'config: update site settings',
-            content: btoa(unescape(encodeURIComponent(bfcfgText))),
-            sha: bfcfgRes.sha, branch: BRANCH
-          }})
-        ]);
-        toast('网站设置已保存，等待部署生效', 'success');
-        document.getElementById('status').textContent = '网站设置 · 已保存';
-        // Update local cache
-        siteSettings.title = values.title;
-        siteSettings.subtitle = values.subtitle;
-        siteSettings.siteDescription = values.siteDescription;
-        siteSettings.announcement = values.announcement;
-      } catch (e) {
-        toast('保存失败: ' + e.message, 'error');
+          // Save both files
+          await Promise.all([
+            ghAPI('contents/_config.yml', { method: 'PUT', body: {
+              message: 'config: update site settings',
+              content: btoa(unescape(encodeURIComponent(cfgText))),
+              sha: cfgRes.sha, branch: BRANCH
+            }}),
+            ghAPI('contents/_config.butterfly.yml', { method: 'PUT', body: {
+              message: 'config: update site settings',
+              content: btoa(unescape(encodeURIComponent(bfcfgText))),
+              sha: bfcfgRes.sha, branch: BRANCH
+            }})
+          ]);
+          toast('网站设置已保存，等待部署生效', 'success');
+          document.getElementById('status').textContent = '网站设置 · 已保存';
+          // Update local cache
+          siteSettings.title = values.title;
+          siteSettings.subtitle = values.subtitle;
+          siteSettings.siteDescription = values.siteDescription;
+          siteSettings.announcement = values.announcement;
+          return;
+        } catch (e) {
+          if (attempt < 2 && /does not match|409/.test(e.message)) {
+            document.getElementById('status').textContent = 'SHA 冲突，重试中...';
+            continue;
+          }
+          toast('保存失败: ' + e.message, 'error');
+          return;
+        }
       }
     }
 
