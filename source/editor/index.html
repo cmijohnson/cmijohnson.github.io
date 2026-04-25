@@ -83,6 +83,13 @@
     .data-form input:focus,.data-form textarea:focus{border-color:var(--blue)}
     .data-form textarea{resize:vertical;min-height:60px}
     .data-form .form-actions{display:flex;gap:8px;justify-content:flex-end}
+    .links-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+    .link-row{display:flex;gap:8px;align-items:center}
+    .link-row input{flex:1}
+    .link-row .btn{padding:6px 10px;font-size:.75rem;flex-shrink:0}
+    .team-links{margin-top:8px;font-size:.82rem}
+    .team-links a{color:var(--blue);text-decoration:none}
+    .team-links a:hover{text-decoration:underline}
 
     .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
     .toolbar{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -262,21 +269,24 @@
           { key: 'name', label: '姓名', type: 'text', required: true },
           { key: 'avatar', label: '头像文字', type: 'text', required: true },
           { key: 'position', label: '职位', type: 'text' },
-          { key: 'bio', label: '简介', type: 'text' }
+          { key: 'bio', label: '简介', type: 'text' },
+          { key: 'links', label: '链接', type: 'links' }
         ]},
       { key: 'competitions', name: '竞赛成果', icon: 'fas fa-trophy', file: 'source/_data/competitions.json',
         fields: [
           { key: 'name', label: '竞赛名称', type: 'text', required: true },
           { key: 'date', label: '时间', type: 'text' },
           { key: 'result', label: '成绩', type: 'text' },
-          { key: 'description', label: '描述', type: 'textarea' }
+          { key: 'description', label: '描述', type: 'textarea' },
+          { key: 'links', label: '链接', type: 'links' }
         ]},
       { key: 'research', name: '科研项目', icon: 'fas fa-flask', file: 'source/_data/research.json',
         fields: [
           { key: 'title', label: '项目名称', type: 'text', required: true },
           { key: 'date', label: '时间', type: 'text' },
           { key: 'status', label: '状态', type: 'select', options: [{v:'ongoing',l:'进行中'},{v:'completed',l:'已完成'},{v:'planned',l:'计划中'}] },
-          { key: 'description', label: '描述', type: 'textarea' }
+          { key: 'description', label: '描述', type: 'textarea' },
+          { key: 'links', label: '链接', type: 'links' }
         ]},
       { key: 'advisors', name: '指导教师', icon: 'fas fa-chalkboard-teacher', file: 'source/_data/advisors.json',
         fields: [
@@ -284,7 +294,8 @@
           { key: 'title', label: '学院', type: 'text' },
           { key: 'bio', label: '简介', type: 'textarea' },
           { key: 'fields', label: '研究方向', type: 'text' },
-          { key: 'email', label: '邮箱', type: 'text' }
+          { key: 'email', label: '邮箱', type: 'text' },
+          { key: 'links', label: '链接', type: 'links' }
         ]},
       { key: 'timeline', name: '时间轴', icon: 'fas fa-clock', file: 'source/_data/timeline.json',
         fields: [
@@ -835,7 +846,18 @@
         dt.fields.forEach(f => {
           html += `<div class="form-row"><div style="flex:1">
             <label>${esc(f.label)}${f.required ? ' *' : ''}</label>`;
-          if (f.type === 'textarea') {
+          if (f.type === 'links') {
+            const links = item[f.key] || [];
+            html += `<div class="links-list" id="df-links-list">`;
+            links.forEach((lk, li) => {
+              html += `<div class="link-row">
+                <input type="text" class="df-link-url" placeholder="URL" value="${esc(lk.url||'')}">
+                <input type="text" class="df-link-label" placeholder="标签（可选）" value="${esc(lk.label||'')}">
+                <button class="btn btn-red" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+              </div>`;
+            });
+            html += `</div><button class="btn btn-ghost" onclick="addLinkRow()"><i class="fas fa-plus"></i> 添加链接</button>`;
+          } else if (f.type === 'textarea') {
             html += `<textarea id="df-${f.key}" rows="3">${esc(item[f.key] || '')}</textarea>`;
           } else if (f.type === 'select') {
             html += `<select id="df-${f.key}">${f.options.map(o =>
@@ -875,6 +897,16 @@
       dataEditing = { typeKey: currentDataType.key, index: -1 };
       renderDataView();
     }
+    function addLinkRow() {
+      const list = document.getElementById('df-links-list');
+      if (!list) return;
+      const div = document.createElement('div');
+      div.className = 'link-row';
+      div.innerHTML = `<input type="text" class="df-link-url" placeholder="URL" value="">
+        <input type="text" class="df-link-label" placeholder="标签（可选）" value="">
+        <button class="btn btn-red" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>`;
+      list.appendChild(div);
+    }
     function dataEdit(i) {
       dataEditing = { typeKey: currentDataType.key, index: i };
       renderDataView();
@@ -889,6 +921,17 @@
       const dt = currentDataType;
       const item = {};
       for (const f of dt.fields) {
+        if (f.type === 'links') {
+          const rows = document.querySelectorAll('#df-links-list .link-row');
+          const links = [];
+          rows.forEach(row => {
+            const url = row.querySelector('.df-link-url').value.trim();
+            const label = row.querySelector('.df-link-label').value.trim();
+            if (url) links.push({ url, label: label || url });
+          });
+          if (links.length) item[f.key] = links;
+          continue;
+        }
         const el = document.getElementById('df-' + f.key);
         if (!el) continue;
         item[f.key] = el.value.trim();
@@ -948,7 +991,7 @@
         const members = dataStore.members || [];
         html += '<div class="team-section">\n<h2 class="team-section-title">核心成员</h2>\n<p class="team-section-subtitle">Core Members</p>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-members-grid">\n';
         members.forEach(m => {
-          html += `<div class="team-member-card">\n<div class="team-member-avatar">${esc(m.avatar||'?')}</div>\n<h3>${esc(m.name)}</h3>\n<div class="position">${esc(m.position||'')}</div>\n<div class="bio">${esc(m.bio||'')}</div>\n</div>\n\n`;
+          html += `<div class="team-member-card">\n<div class="team-member-avatar">${esc(m.avatar||'?')}</div>\n<h3>${esc(m.name)}</h3>\n<div class="position">${esc(m.position||'')}</div>\n<div class="bio">${esc(m.bio||'')}</div>\n${renderLinks(m.links)}</div>\n\n`;
         });
         html += '</div>\n</div>\n';
         // timeline
@@ -966,7 +1009,7 @@
           const grad = c.gradient === 'blue' ? 'blue-grad' : 'orange-grad';
           const color = c.gradient === 'blue' ? '#2563eb' : '#f97316';
           const icon = c.gradient === 'blue' ? 'fas fa-medal' : 'fas fa-trophy';
-          html += `<div class="team-comp-card${rev}">\n<div class="team-comp-image ${grad}">\n<span class="team-comp-badge">${esc(c.result||'')}</span>\n<i class="${icon}" style="font-size:4rem;color:${color};opacity:.3"></i>\n</div>\n<div class="team-comp-content">\n<div class="date">${esc(c.date||'')}</div>\n<h3>${esc(c.name)}</h3>\n<p>${esc(c.description||'')}</p>\n</div>\n</div>\n\n`;
+          html += `<div class="team-comp-card${rev}">\n<div class="team-comp-image ${grad}">\n<span class="team-comp-badge">${esc(c.result||'')}</span>\n<i class="${icon}" style="font-size:4rem;color:${color};opacity:.3"></i>\n</div>\n<div class="team-comp-content">\n<div class="date">${esc(c.date||'')}</div>\n<h3>${esc(c.name)}</h3>\n<p>${esc(c.description||'')}</p>\n${renderLinks(c.links)}</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
       } else if (key === 'research') {
@@ -977,14 +1020,14 @@
           const statusText = r.status === 'ongoing' ? '进行中' : r.status === 'completed' ? '已完成' : '计划中';
           const grad = r.color === 'blue' ? 'blue-grad2' : 'green-grad';
           const clr = r.color === 'blue' ? '#2563eb' : '#16a34a';
-          html += `<div class="team-research-card">\n<div class="team-research-image ${grad}">\n<i class="${r.icon||'fas fa-flask'}" style="font-size:3rem;color:${clr};opacity:.4"></i>\n<span class="team-research-status ${statusClass}">${statusText}</span>\n</div>\n<div class="team-research-body">\n<h3>${esc(r.title)}</h3>\n<div class="date">${esc(r.date||'')}</div>\n<p>${esc(r.description||'')}</p>\n</div>\n</div>\n\n`;
+          html += `<div class="team-research-card">\n<div class="team-research-image ${grad}">\n<i class="${r.icon||'fas fa-flask'}" style="font-size:3rem;color:${clr};opacity:.4"></i>\n<span class="team-research-status ${statusClass}">${statusText}</span>\n</div>\n<div class="team-research-body">\n<h3>${esc(r.title)}</h3>\n<div class="date">${esc(r.date||'')}</div>\n<p>${esc(r.description||'')}</p>\n${renderLinks(r.links)}</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
       } else if (key === 'advisors') {
         const advs = dataStore.advisors || [];
         html += '<div class="team-section">\n<h2 class="team-section-title">指导教师</h2>\n<p class="team-section-subtitle">Faculty Advisors</p>\n<div class="team-accent-bar team-accent-bar--orange"></div>\n\n<div class="team-advisor-list">\n';
         advs.forEach(a => {
-          html += `<div class="team-advisor-card">\n<div class="team-advisor-avatar">\n<i class="fas fa-user-tie" style="font-size:2.5rem;color:#9333ea;opacity:.6"></i>\n</div>\n<div class="team-advisor-info">\n<h3>${esc(a.name)}</h3>\n<div class="title">${esc(a.title||'')}</div>\n<p>${esc(a.bio||'')}</p>\n<div class="fields"><strong>研究方向：</strong>${esc(a.fields||'')}</div>\n<div class="contact"><i class="fas fa-envelope"></i> <a href="mailto:${esc(a.email||'')}">${esc(a.email||'')}</a></div>\n</div>\n</div>\n\n`;
+          html += `<div class="team-advisor-card">\n<div class="team-advisor-avatar">\n<i class="fas fa-user-tie" style="font-size:2.5rem;color:#9333ea;opacity:.6"></i>\n</div>\n<div class="team-advisor-info">\n<h3>${esc(a.name)}</h3>\n<div class="title">${esc(a.title||'')}</div>\n<p>${esc(a.bio||'')}</p>\n<div class="fields"><strong>研究方向：</strong>${esc(a.fields||'')}</div>\n<div class="contact"><i class="fas fa-envelope"></i> <a href="mailto:${esc(a.email||'')}">${esc(a.email||'')}</a></div>\n${renderLinks(a.links)}</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
       } else if (key === 'news') {
@@ -1022,6 +1065,12 @@
       return s.replace(/[^\w一-鿿\- ]/g, '').replace(/\s+/g, '-').toLowerCase() || 'untitled';
     }
     function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function renderLinks(links) {
+      if (!links || !links.length) return '';
+      return '<div class="team-links">' + links.map(l =>
+        `<a href="${esc(l.url)}" target="_blank" rel="noopener"><i class="fas fa-link"></i> ${esc(l.label||l.url)}</a>`
+      ).join(' · ') + '</div>\n';
+    }
     function toast(msg, type = 'success') {
       const el = document.getElementById('toast');
       el.textContent = msg;
