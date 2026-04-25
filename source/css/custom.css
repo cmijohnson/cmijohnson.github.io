@@ -1,0 +1,106 @@
+/* Academic Style Customizations */
+
+/* Abstract block for posts */
+.abstract-block {
+  background: var(--card-bg, #f8f9fa);
+  border-left: 4px solid var(--btn-bg, #49b1f5);
+  padding: 1rem 1.25rem;
+  margin: 1.5rem 0;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.95rem;
+  line-height: 1.75;
+  color: var(--font-color, #4c4948);
+}
+
+.abstract-block .abstract-label {
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--btn-bg, #49b1f5);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+/* Academic reference list */
+.ref-list {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--light-grey, #e3e8f1);
+}
+
+.ref-list ol {
+  padding-left: 1.5rem;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--font-color, #4c4948);
+}
+
+.ref-list li {
+  margin-bottom: 0.3rem;
+}
+
+/* Research page card grid */
+.research-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+.research-card {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--light-grey, #e3e8f1);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.research-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.research-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.research-card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--font-color, #4c4948);
+}
+
+.research-card .tag-list {
+  margin-top: 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.research-card .tag-list span {
+  background: var(--btn-bg, #49b1f5);
+  color: #fff;
+  padding: 0.15rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
+/* Subtle academic section divider */
+article hr {
+  border: none;
+  border-top: 1px solid var(--light-grey, #e3e8f1);
+  margin: 2rem 0;
+}
+
+/* Improve blockquote for academic citations */
+blockquote {
+  border-left: 3px solid var(--btn-bg, #49b1f5);
+  background: var(--card-bg, #f8f9fa);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: var(--second-font-color, #8a919f);
+}

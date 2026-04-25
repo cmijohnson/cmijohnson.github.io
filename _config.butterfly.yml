@@ -5,8 +5,9 @@
 menu:
   首页: / || fas fa-home
   归档: /blog/archives/ || fas fa-archive
+  研究: /research/ || fas fa-flask
   标签: /tags/ || fas fa-tags
-  关于: /about/ || fas fa-heart
+  关于: /about/ || fas fa-user-graduate
 
 # Code Blocks
 highlight_theme: light
@@ -17,7 +18,7 @@ code_word_wrap: false
 # Social
 social:
   fab fa-github: https://github.com/cmijohnson || GitHub
-  fas fa-globe: https://www.cmiteam.cn || 个人博客
+  fas fa-globe: https://www.cmiteam.cn || Homepage
 
 # Avatar
 avatar: https://github.com/cmijohnson.png
@@ -41,7 +42,7 @@ footer:
   owner:
     enable: true
     since: 2025
-  custom_text:
+  custom_text: "Academic blog powered by Hexo & Butterfly"
   copyright: true
 
 # Post
@@ -54,6 +55,13 @@ toc:
   enable: true
   number: true
 
+# Math (KaTeX)
+math:
+  use: katex
+  per_page: true
+  katex:
+    copy_tex: true
+
 # Comments (disabled by default)
 comments:
   use:
@@ -62,3 +70,8 @@ comments:
 # Analytics (disabled by default)
 busuanzi:
   enable: false
+
+# Inject custom CSS
+inject:
+  css:
+    - /css/custom.css
