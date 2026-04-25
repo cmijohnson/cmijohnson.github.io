@@ -216,6 +216,10 @@
           <label>分类</label>
           <input type="text" id="inp-categories" placeholder="分类名" style="width:120px">
         </div>
+        <div class="field" id="field-author">
+          <label>作者</label>
+          <input type="text" id="inp-author" placeholder="作者名" style="width:120px">
+        </div>
       </div>
 
       <div class="editor-area" id="editor-area">
@@ -386,6 +390,7 @@
         document.getElementById('btn-template').style.display = 'inline-flex';
         document.getElementById('field-tags').style.display = 'flex';
         document.getElementById('field-categories').style.display = 'flex';
+        document.getElementById('field-author').style.display = 'flex';
         document.getElementById('field-status').style.display = 'flex';
         if (!isLocal) loadPosts();
         else { posts = []; renderPostList(); }
@@ -395,6 +400,7 @@
         document.getElementById('editor-area').style.display = 'flex';
         document.getElementById('field-tags').style.display = 'none';
         document.getElementById('field-categories').style.display = 'none';
+        document.getElementById('field-author').style.display = 'none';
         document.getElementById('field-status').style.display = 'none';
         currentPost = null;
         currentPage = null;
@@ -548,7 +554,7 @@
     }
 
     function parseFrontMatter(raw) {
-      let title = '', tags = '', categories = '', status = 'published', body = raw;
+      let title = '', tags = '', categories = '', author = '', status = 'published', body = raw;
       currentFrontMatter = '';
       const fmMatch = raw.match(/^(---\n[\s\S]*?\n---)\n?([\s\S]*)$/);
       if (fmMatch) {
@@ -561,6 +567,8 @@
         if (tg) tags = tg[1].replace(/['"]/g, '').trim();
         const cg = fm.match(/categories:\s*(.+)/);
         if (cg) categories = cg[1].replace(/^['"]|['"]$/g, '').trim();
+        const au = fm.match(/author:\s*(.+)/);
+        if (au) author = au[1].replace(/^['"]|['"]$/g, '').trim();
         const st = fm.match(/status:\s*(.+)/);
         if (st) status = st[1].replace(/^['"]|['"]$/g, '').trim();
         const pub = fm.match(/published:\s*(.+)/);
@@ -569,6 +577,7 @@
       document.getElementById('inp-title').value = title;
       document.getElementById('inp-tags').value = tags;
       document.getElementById('inp-categories').value = categories;
+      document.getElementById('inp-author').value = author;
       document.getElementById('inp-status').value = status;
       document.getElementById('editor').value = body;
       // update status bar with post status
@@ -601,6 +610,7 @@
       const title = document.getElementById('inp-title').value.trim();
       const tags = document.getElementById('inp-tags').value.trim();
       const categories = document.getElementById('inp-categories').value.trim();
+      const author = document.getElementById('inp-author').value.trim();
       const status = document.getElementById('inp-status').value;
       const body = document.getElementById('editor').value;
       if (!title) return null;
@@ -625,6 +635,7 @@
       const now = new Date();
       const date = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
       let fm = `---\ntitle: ${title}\ndate: ${date}`;
+      if (author) fm += `\nauthor: ${author}`;
       if (tags) {
         const tagList = tags.split(/[,，]/).map(t => t.trim()).filter(Boolean);
         fm += `\ntags: [${tagList.join(', ')}]`;
