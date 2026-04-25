@@ -309,6 +309,12 @@
           { key: 'title', label: '标题', type: 'text', required: true },
           { key: 'link', label: '链接', type: 'text' },
           { key: 'icon', label: '图标', type: 'text' }
+        ]},
+      { key: 'changelog', name: '更新日志', icon: 'fas fa-clock-rotate-left', file: 'source/_data/changelog.json',
+        fields: [
+          { key: 'date', label: '日期', type: 'text', required: true },
+          { key: 'title', label: '标题', type: 'text', required: true },
+          { key: 'description', label: '描述', type: 'textarea' }
         ]}
     ];
 
@@ -983,7 +989,8 @@
         research: 'source/team/research/index.md',
         advisors: 'source/team/advisors/index.md',
         timeline: 'source/team/members/index.md',
-        news: 'source/team/index.md'
+        news: 'source/team/index.md',
+        changelog: 'source/announcements/index.md'
       };
       const pagePath = pageMap[key];
       if (!pagePath) return;
@@ -992,6 +999,8 @@
       let html;
       if (key === 'news') {
         html = '---\ntitle: 智链细米安全盾队\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      } else if (key === 'changelog') {
+        html = '---\ntitle: 更新日志\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
       } else {
         html = '---\ntitle: ' + ({members:'团队风采',competitions:'竞赛成果',research:'科研项目',advisors:'指导教师',timeline:'团队风采'}[key]) + '\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
       }
@@ -1047,6 +1056,13 @@
         html += '<div class="team-section">\n<h2 class="team-section-title">最新动态</h2>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-news-grid">\n';
         items.forEach(n => {
           html += `<a href="${esc(n.link||'#')}" class="team-card-link">\n<div class="team-news-card">\n<div class="team-news-image blue-grad3">\n<i class="${esc(n.icon||'fas fa-newspaper')}" style="font-size:3rem;color:#2563eb;opacity:.5"></i>\n</div>\n<div class="team-news-body">\n<div class="date">${esc(n.date)}</div>\n<h4>${esc(n.title)}</h4>\n</div>\n</div>\n</a>\n\n`;
+        });
+        html += '</div>\n</div>\n';
+      } else if (key === 'changelog') {
+        const items = dataStore.changelog || [];
+        html += '<div class="team-section">\n<h2 class="team-section-title">更新日志</h2>\n<p class="team-section-subtitle">Changelog</p>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-timeline">\n';
+        items.forEach(c => {
+          html += `<div class="team-timeline-item">\n<div class="team-timeline-dot"></div>\n<div class="team-timeline-card">\n<div class="year">${esc(c.date)}</div>\n<h4>${esc(c.title)}</h4>\n<p>${esc(c.description||'')}</p>\n</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
       }
