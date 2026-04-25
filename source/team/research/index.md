@@ -1,8 +1,3 @@
----
-title: 科研项目
-date: 2026-04-22 00:00:00
-comments: false
----
 
 <div class="team-section">
 <h2 class="team-section-title">科研项目</h2>
@@ -17,30 +12,11 @@ comments: false
 <span class="team-research-status status-ongoing">进行中</span>
 </div>
 <div class="team-research-body">
-<h3>基于区块链的物联网设备身份认证系统</h3>
-<div class="date">2024 — 至今</div>
-<p>面向海量设备场景，探索轻量级可信身份认证方案。基于区块链技术实现去中心化的设备身份管理，保障物联网生态的安全可信。</p>
-<div class="achievements"><i class="fas fa-check-circle"></i> 已完成原型设计与核心模块开发</div>
-</div>
-</div>
-</a>
+<h3>暂未公布</h3>
+<div class="date">2026 — 至今</div>
+<p>MAS动态权限有关。</p>
 
-<a href="/blog/2024/06/15/container-escape-detection/" class="team-card-link">
-<div class="team-research-card">
-<div class="team-research-image blue-grad2">
-<i class="fas fa-box" style="font-size:3rem;color:#2563eb;opacity:.4"></i>
-<span class="team-research-status status-completed">已完成</span>
-</div>
-<div class="team-research-body">
-<h3>容器逃逸检测机制研究</h3>
-<div class="date">2024</div>
-<p>面向云原生环境，研究基于系统调用序列的异常检测方法。通过分析容器运行时行为，识别潜在的容器逃逸攻击。</p>
-<div class="achievements"><i class="fas fa-check-circle"></i> 形成可复用检测规则与实验数据集</div>
-</div>
-</div>
-</a>
-</div>
-</div>
+
 
 <div class="team-section">
 <h2 class="team-section-title">研究方向</h2>
@@ -63,8 +39,8 @@ comments: false
 <i class="fas fa-microchip" style="font-size:3rem;color:#2563eb;opacity:.4"></i>
 </div>
 <div class="team-research-body">
-<h3>二进制分析</h3>
-<p>软件逆向工程与漏洞挖掘，结合符号执行、模糊测试等自动化技术提升漏洞发现效率。</p>
+<h3>Agent安全</h3>
+<p>多智能体安全研究。</p>
 </div>
 </div>
 
