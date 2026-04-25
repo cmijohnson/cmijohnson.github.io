@@ -486,7 +486,7 @@
         };
         document.getElementById('status').textContent = '保存中...';
         try {
-          const res = await ghAPI(`contents/${currentPage.path}`, { method: 'PUT', body: JSON.stringify(payload) });
+          const res = await ghAPI(`contents/${currentPage.path}`, { method: 'PUT', body: payload });
           currentPage.sha = res.content.sha;
           toast('页面保存成功！', 'success');
           document.getElementById('status').textContent = currentPage.path;
@@ -525,7 +525,7 @@
 
       document.getElementById('status').textContent = '保存中...';
       try {
-        const res = await ghAPI(`contents/${path}`, { method: 'PUT', body: JSON.stringify(payload) });
+        const res = await ghAPI(`contents/${path}`, { method: 'PUT', body: payload });
         currentPost = { name: data.filename, sha: res.content.sha, path };
         toast('保存成功！', 'success');
         document.getElementById('status').textContent = data.filename;
@@ -553,7 +553,7 @@
       try {
         await ghAPI(`contents/${currentPost.path}`, {
           method: 'DELETE',
-          body: JSON.stringify({ message: `delete: ${currentPost.name}`, sha: currentPost.sha, branch: BRANCH })
+          body: { message: `delete: ${currentPost.name}`, sha: currentPost.sha, branch: BRANCH }
         });
         toast('已删除', 'success');
         newPost();
