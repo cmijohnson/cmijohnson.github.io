@@ -1,3 +1,14 @@
 [
-  { "name": "暂无", "date": "日期待定", "result": "暂无", "description": "暂无", "gradient": "orange" }
+  {
+    "name": "暂无",
+    "date": "日期待定",
+    "result": "暂无",
+    "description": "暂无",
+    "links": [
+      {
+        "url": "www.cmiteam.top",
+        "label": "测试用"
+      }
+    ]
+  }
 ]
