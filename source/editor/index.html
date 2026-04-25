@@ -91,6 +91,22 @@
     .team-links a{color:var(--blue);text-decoration:none}
     .team-links a:hover{text-decoration:underline}
 
+    /* Icon picker */
+    .icon-picker-trigger{cursor:pointer;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);display:flex;align-items:center;gap:8px;font-size:.85rem;transition:border-color .15s}
+    .icon-picker-trigger:hover{border-color:var(--blue)}
+    .icon-picker-trigger i{font-size:1.1rem;color:var(--blue)}
+    .icon-picker-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);z-index:1000;justify-content:center;align-items:center}
+    .icon-picker-overlay.show{display:flex}
+    .icon-picker-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;width:520px;max-height:70vh;overflow-y:auto}
+    .icon-picker-modal h3{font-size:1rem;margin-bottom:12px}
+    .icon-picker-search{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;font-family:inherit;outline:none;margin-bottom:12px}
+    .icon-picker-search:focus{border-color:var(--blue)}
+    .icon-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px}
+    .icon-grid-item{padding:10px;text-align:center;border-radius:8px;cursor:pointer;transition:background .15s;font-size:1.1rem}
+    .icon-grid-item:hover{background:var(--bg)}
+    .icon-grid-item.selected{background:rgba(79,140,255,.15);color:var(--blue)}
+    .icon-category{font-size:.75rem;font-weight:700;color:var(--text2);text-transform:uppercase;margin:12px 0 6px;letter-spacing:.5px}
+
     .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden}
     .toolbar{padding:12px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
     .toolbar .sep{width:1px;height:24px;background:var(--border)}
@@ -289,6 +305,8 @@
           { key: 'title', label: '项目名称', type: 'text', required: true },
           { key: 'date', label: '时间', type: 'text' },
           { key: 'status', label: '状态', type: 'select', options: [{v:'ongoing',l:'进行中'},{v:'completed',l:'已完成'},{v:'planned',l:'计划中'}] },
+          { key: 'icon', label: '图标', type: 'text' },
+          { key: 'color', label: '颜色', type: 'select', options: [{v:'green',l:'绿色'},{v:'blue',l:'蓝色'}] },
           { key: 'description', label: '描述', type: 'textarea' },
           { key: 'links', label: '链接', type: 'links' }
         ]},
@@ -314,11 +332,24 @@
           { key: 'link', label: '链接', type: 'text' },
           { key: 'icon', label: '图标', type: 'text' }
         ]},
+      { key: 'intro', name: '个人介绍', icon: 'fas fa-user-shield', file: 'source/_data/intro.json',
+        fields: [
+          { key: 'title', label: '标题', type: 'text', required: true },
+          { key: 'description', label: '内容', type: 'textarea' },
+          { key: 'icon', label: '图标', type: 'text' }
+        ]},
       { key: 'changelog', name: '更新日志', icon: 'fas fa-clock-rotate-left', file: 'source/_data/changelog.json',
         fields: [
           { key: 'date', label: '日期', type: 'text', required: true },
           { key: 'title', label: '标题', type: 'text', required: true },
           { key: 'description', label: '描述', type: 'textarea' }
+        ]},
+      { key: 'site', name: '网站设置', icon: 'fas fa-cog', file: '',
+        fields: [
+          { key: 'title', label: '站点标题', type: 'text', configPath: '_config.yml', yamlKey: 'title' },
+          { key: 'subtitle', label: '副标题', type: 'text', configPath: '_config.yml', yamlKey: 'subtitle' },
+          { key: 'siteDescription', label: '站点描述（侧边栏）', type: 'text', configPath: '_config.yml', yamlKey: 'description' },
+          { key: 'announcement', label: '公告文字', type: 'textarea', configPath: '_config.butterfly.yml', yamlKey: 'aside.card_announcement.content' }
         ]}
     ];
 
@@ -326,6 +357,7 @@
     let dataEditing = null; // { typeKey, index } or null
     let groupState = {}; // { groupName: true/false } for collapsed
     let currentFrontMatter = ''; // original front matter string for pages
+    let siteSettings = {}; // { title, subtitle, siteDescription, announcement }
 
     let token = localStorage.getItem('gh_token') || '';
     let isLocal = false;
@@ -810,10 +842,10 @@
     function renderSidebarData() {
       const el = document.getElementById('post-list');
       el.innerHTML = DATA_TYPES.map(dt => {
-        const count = (dataStore[dt.key] || []).length;
-        return `<div class="post-item" onclick="selectDataType('${dt.key}')">
+        const meta = dt.file ? `${(dataStore[dt.key] || []).length} 条记录 · ${dt.file}` : '配置文件';
+        return `<div class="post-item ${currentDataType && currentDataType.key === dt.key ? 'active' : ''}" onclick="selectDataType('${dt.key}')">
           <div class="title"><i class="${dt.icon} page-icon"></i>${esc(dt.name)}</div>
-          <div class="meta">${count} 条记录 · ${dt.file}</div>
+          <div class="meta">${meta}</div>
         </div>`;
       }).join('');
     }
@@ -822,7 +854,12 @@
     function selectDataType(key) {
       currentDataType = DATA_TYPES.find(d => d.key === key);
       dataEditing = null;
-      loadDataForType(key);
+      if (key === 'site') {
+        renderSidebarData();
+        loadSiteSettings().then(() => renderDataView());
+      } else {
+        loadDataForType(key);
+      }
     }
 
     async function loadDataForType(key) {
@@ -854,6 +891,31 @@
         return;
       }
       const dt = currentDataType;
+
+      // site settings form
+      if (dt.key === 'site') {
+        let html = `<div class="data-section">
+          <div class="data-section-header">
+            <h3><i class="${dt.icon}"></i> ${esc(dt.name)}</h3>
+            <button class="btn btn-green" onclick="saveSiteSettings()"><i class="fas fa-save"></i> 保存设置</button>
+          </div>
+          <div class="data-form" style="border-color:var(--border)">`;
+        dt.fields.forEach(f => {
+          const val = siteSettings[f.key] || '';
+          html += `<div class="form-row"><div style="flex:1">
+            <label>${esc(f.label)}</label>`;
+          if (f.type === 'textarea') {
+            html += `<textarea id="df-${f.key}" rows="3">${esc(val)}</textarea>`;
+          } else {
+            html += `<input type="text" id="df-${f.key}" value="${esc(val)}">`;
+          }
+          html += `</div></div>`;
+        });
+        html += `</div></div>`;
+        container.innerHTML = html;
+        return;
+      }
+
       const items = dataStore[dt.key] || [];
       let html = `<div class="data-section">
         <div class="data-section-header">
@@ -889,6 +951,14 @@
             html += `<select id="df-${f.key}">${f.options.map(o =>
               `<option value="${o.v}" ${item[f.key]===o.v?'selected':''}>${esc(o.l)}</option>`
             ).join('')}</select>`;
+          } else if (f.key === 'icon') {
+            html += `<div style="display:flex;gap:8px;align-items:center">
+              <input type="text" id="df-${f.key}" value="${esc(item[f.key] || '')}" style="flex:1">
+              <div class="icon-picker-trigger" onclick="openIconPicker(document.getElementById('df-${f.key}').value,function(ic){document.getElementById('df-${f.key}').value=ic})">
+                <i class="${esc(item[f.key] || 'fas fa-icons')}" id="df-${f.key}-preview"></i>
+                <span>选择</span>
+              </div>
+            </div>`;
           } else {
             html += `<input type="text" id="df-${f.key}" value="${esc(item[f.key] || '')}">`;
           }
@@ -972,6 +1042,160 @@
       toast('已添加/更新，记得点「保存全部」');
     }
 
+    // ── Site Settings ──
+    async function loadSiteSettings() {
+      try {
+        const [cfg, bfcfg] = await Promise.all([
+          ghAPI('contents/_config.yml?ref=' + BRANCH),
+          ghAPI('contents/_config.butterfly.yml?ref=' + BRANCH)
+        ]);
+        const cfgText = decodeURIComponent(escape(atob(cfg.content)));
+        const bfcfgText = decodeURIComponent(escape(atob(bfcfg.content)));
+        siteSettings = {
+          _cfgSha: cfg.sha,
+          _bfcfgSha: bfcfg.sha,
+          title: yamlGet(cfgText, 'title'),
+          subtitle: yamlGet(cfgText, 'subtitle'),
+          siteDescription: yamlGet(cfgText, 'description'),
+          announcement: yamlGet(bfcfgText, 'aside.card_announcement.content') || 'This is my Blog'
+        };
+      } catch (e) {
+        toast('加载设置失败: ' + e.message, 'error');
+      }
+    }
+
+    function yamlGet(text, dottedKey) {
+      const keys = dottedKey.split('.');
+      let lines = text.split('\n');
+      for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        let found = false;
+        for (let j = 0; j < lines.length; j++) {
+          const m = lines[j].match(new RegExp('^' + key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':\\s*(.*)'));
+          if (m) {
+            if (i === keys.length - 1) {
+              let val = m[1].trim();
+              if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) val = val.slice(1, -1);
+              return val;
+            }
+            // Find nested block
+            const indent = lines[j].match(/^(\s*)/)[1].length;
+            const nested = [];
+            for (let k = j + 1; k < lines.length; k++) {
+              const ni = lines[k].match(/^(\s*)/)[1].length;
+              if (ni > indent) nested.push(lines[k].substring(indent + 2));
+              else if (lines[k].trim() && ni <= indent) break;
+            }
+            lines = nested;
+            found = true;
+            break;
+          }
+        }
+        if (!found) return '';
+      }
+      return '';
+    }
+
+    function yamlSet(text, dottedKey, value) {
+      const keys = dottedKey.split('.');
+      if (keys.length === 1) {
+        const re = new RegExp('^(' + keys[0].replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':\\s*).*$', 'm');
+        if (re.test(text)) {
+          const needsQuote = /[:#\[\]{}&*!|>'"%@`]/.test(value) || value === '';
+          const v = needsQuote ? '"' + value.replace(/"/g, '\\"') + '"' : value;
+          return text.replace(re, '$1' + v);
+        }
+        return text;
+      }
+      // Nested key like aside.card_announcement.content
+      const topKey = keys[0];
+      const rest = keys.slice(1);
+      const lines = text.split('\n');
+      let result = [];
+      let inBlock = false;
+      let blockIndent = -1;
+      let replaced = false;
+      for (let i = 0; i < lines.length; i++) {
+        const topMatch = lines[i].match(new RegExp('^(' + topKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':\\s*)'));
+        if (topMatch && !inBlock) {
+          inBlock = true;
+          blockIndent = lines[i].match(/^(\s*)/)[1].length;
+          result.push(lines[i]);
+          continue;
+        }
+        if (inBlock) {
+          const curIndent = lines[i].match(/^(\s*)/)[1].length;
+          if (lines[i].trim() && curIndent <= blockIndent) {
+            inBlock = false;
+          } else {
+            const nestedKey = rest.join('.');
+            const parts = nestedKey.split('.');
+            const leafKey = parts[parts.length - 1];
+            const leafRe = new RegExp('^(\\s*)(' + leafKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ':\\s*).*$');
+            if (leafRe.test(lines[i]) && !replaced) {
+              const needsQuote = /[:#\[\]{}&*!|>'"%@`]/.test(value) || value === '';
+              const v = needsQuote ? '"' + value.replace(/"/g, '\\"') + '"' : value;
+              result.push(lines[i].replace(leafRe, '$1$2' + v));
+              replaced = true;
+              continue;
+            }
+          }
+        }
+        result.push(lines[i]);
+      }
+      return result.join('\n');
+    }
+
+    async function saveSiteSettings() {
+      if (!siteSettings._cfgSha || !siteSettings._bfcfgSha) return toast('设置未加载', 'error');
+      // Read current form values
+      const fields = currentDataType.fields;
+      const values = {};
+      fields.forEach(f => {
+        const el = document.getElementById('df-' + f.key);
+        if (el) values[f.key] = el.value.trim();
+      });
+      document.getElementById('status').textContent = '保存中...';
+      try {
+        // Fetch current config files
+        const [cfgRes, bfcfgRes] = await Promise.all([
+          ghAPI('contents/_config.yml?ref=' + BRANCH),
+          ghAPI('contents/_config.butterfly.yml?ref=' + BRANCH)
+        ]);
+        let cfgText = decodeURIComponent(escape(atob(cfgRes.content)));
+        let bfcfgText = decodeURIComponent(escape(atob(bfcfgRes.content)));
+
+        // Apply changes
+        cfgText = yamlSet(cfgText, 'title', values.title || '');
+        cfgText = yamlSet(cfgText, 'subtitle', values.subtitle || '');
+        cfgText = yamlSet(cfgText, 'description', values.siteDescription || '');
+        bfcfgText = yamlSet(bfcfgText, 'aside.card_announcement.content', values.announcement || '');
+
+        // Save both files
+        await Promise.all([
+          ghAPI('contents/_config.yml', { method: 'PUT', body: {
+            message: 'config: update site settings',
+            content: btoa(unescape(encodeURIComponent(cfgText))),
+            sha: cfgRes.sha, branch: BRANCH
+          }}),
+          ghAPI('contents/_config.butterfly.yml', { method: 'PUT', body: {
+            message: 'config: update site settings',
+            content: btoa(unescape(encodeURIComponent(bfcfgText))),
+            sha: bfcfgRes.sha, branch: BRANCH
+          }})
+        ]);
+        toast('网站设置已保存，等待部署生效', 'success');
+        document.getElementById('status').textContent = '网站设置 · 已保存';
+        // Update local cache
+        siteSettings.title = values.title;
+        siteSettings.subtitle = values.subtitle;
+        siteSettings.siteDescription = values.siteDescription;
+        siteSettings.announcement = values.announcement;
+      } catch (e) {
+        toast('保存失败: ' + e.message, 'error');
+      }
+    }
+
     async function saveDataType() {
       if (!currentDataType) return;
       const dt = currentDataType;
@@ -986,6 +1210,17 @@
         dataStore[dt.key + '_sha'] = res.content.sha;
         toast(dt.name + ' 数据已保存！', 'success');
         document.getElementById('status').textContent = dt.name + ' · ' + dataStore[dt.key].length + ' 条';
+        // also write root-level copy for homepage access
+        const rootCopy = { research: 'source/research.json', intro: 'source/intro.json' };
+        if (rootCopy[dt.key]) {
+          try {
+            let rootSha;
+            try { const info = await ghAPI(`contents/${rootCopy[dt.key]}?ref=${BRANCH}`); rootSha = info.sha; } catch(e) {}
+            const rp = { message: `data: sync ${dt.key} for homepage`, content: b64, branch: BRANCH };
+            if (rootSha) rp.sha = rootSha;
+            await ghAPI(`contents/${rootCopy[dt.key]}`, { method: 'PUT', body: rp });
+          } catch(e) { /* non-critical */ }
+        }
         // regenerate the page HTML
         await regeneratePage(dt.key);
       } catch (e) {
@@ -1274,6 +1509,61 @@ abstract: 摘要内容。
       updatePreview();
       document.getElementById('template-menu').style.display = 'none';
       toast('模板已插入');
+    }
+  </script>
+  <!-- Icon Picker Modal -->
+  <div class="icon-picker-overlay" id="icon-picker-overlay" onclick="if(event.target===this)closeIconPicker()">
+    <div class="icon-picker-modal">
+      <h3>选择图标</h3>
+      <input type="text" class="icon-picker-search" id="icon-picker-search" placeholder="搜索图标..." oninput="filterIcons()">
+      <div id="icon-picker-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    // ── Icon Picker ──
+    const ICON_DATA = {
+      '常用': ['fas fa-home','fas fa-user','fas fa-users','fas fa-envelope','fas fa-link','fas fa-globe','fas fa-book','fas fa-star','fas fa-heart','fas fa-bell','fas fa-bullhorn','fas fa-search','fas fa-cog','fas fa-edit','fas fa-trash','fas fa-plus','fas fa-check','fas fa-times','fas fa-arrow-right','fas fa-download'],
+      '学术': ['fas fa-flask','fas fa-microscope','fas fa-graduation-cap','fas fa-book-open','fas fa-file-alt','fas fa-code','fas fa-laptop-code','fas fa-brain','fas fa-robot','fas fa-database'],
+      '安全': ['fas fa-shield-halved','fas fa-lock','fas fa-key','fas fa-bug','fas fa-virus','fas fa-user-secret','fas fa-fingerprint','fas fa-network-wired','fas fa-server','fas fa-cloud'],
+      '社交': ['fab fa-github','fab fa-twitter','fab fa-weixin','fab fa-qq','fab fa-telegram','fab fa-discord','fab fa-linkedin','fab fa-youtube','fab fa-bilibili','fas fa-rss'],
+      '团队': ['fas fa-trophy','fas fa-medal','fas fa-award','fas fa-chalkboard-teacher','fas fa-user-tie','fas fa-people-group','fas fa-handshake','fas fa-lightbulb','fas fa-rocket','fas fa-clipboard'],
+      '文件': ['fas fa-file','fas fa-file-pdf','fas fa-file-word','fas fa-file-code','fas fa-file-image','fas fa-folder','fas fa-folder-open','fas fa-archive','fas fa-cloud-upload-alt','fas fa-save'],
+      '其他': ['fas fa-clock','fas fa-calendar','fas fa-clock-rotate-left','fas fa-newspaper','fas fa-chart-bar','fas fa-map-marker-alt','fas fa-tag','fas fa-tags','fas fa-palette','fas fa-music']
+    };
+    let iconPickerCallback = null;
+
+    function openIconPicker(currentIcon, callback) {
+      iconPickerCallback = callback;
+      const grid = document.getElementById('icon-picker-grid');
+      let html = '';
+      for (const [cat, icons] of Object.entries(ICON_DATA)) {
+        html += `<div class="icon-category">${cat}</div><div class="icon-grid">`;
+        icons.forEach(ic => {
+          const sel = ic === currentIcon ? ' selected' : '';
+          html += `<div class="icon-grid-item${sel}" onclick="selectIcon('${ic}')" title="${ic}"><i class="${ic}"></i></div>`;
+        });
+        html += '</div>';
+      }
+      grid.innerHTML = html;
+      document.getElementById('icon-picker-search').value = '';
+      document.getElementById('icon-picker-overlay').classList.add('show');
+    }
+
+    function closeIconPicker() {
+      document.getElementById('icon-picker-overlay').classList.remove('show');
+    }
+
+    function selectIcon(icon) {
+      closeIconPicker();
+      if (iconPickerCallback) iconPickerCallback(icon);
+    }
+
+    function filterIcons() {
+      const q = document.getElementById('icon-picker-search').value.toLowerCase();
+      document.querySelectorAll('.icon-grid-item').forEach(el => {
+        el.style.display = el.title.includes(q) ? '' : 'none';
+      });
     }
   </script>
 </body>
