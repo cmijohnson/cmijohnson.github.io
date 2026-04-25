@@ -7,7 +7,7 @@ menu:
   归档: /blog/archives/ || fas fa-archive
   研究: /research/ || fas fa-flask
   团队: /team/ || fas fa-shield-halved
-  公告: /announcements/ || fas fa-bullhorn
+  更新日志: /announcements/ || fas fa-clock-rotate-left
   标签: /tags/ || fas fa-tags
   关于: /about/ || fas fa-user-graduate
 
