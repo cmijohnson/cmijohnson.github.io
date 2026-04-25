@@ -1,7 +1,12 @@
 [
   {
-    "title": "关于我",
-    "description": "江苏大学信息安全专业在读，专注于 Web 安全、区块链安全与云原生安全方向的研究。热衷于用技术解决实际问题，积极参与 CTF 竞赛与科研项目。",
-    "icon": "fas fa-user-shield"
+    "title": "关于我？",
+    "description": "江苏大学信息安全专业在读，专注于AI安全与云原生安全方向的研究。热衷于用技术解决实际问题，积极参与 CTF 竞赛与科研项目。目前正在尝试申请科研立项和大创。",
+    "icon": "fas fa-chalkboard-teacher"
+  },
+  {
+    "title": "我的背景？",
+    "description": "原土木工程与力学学院某专业，转专业到计算机学院",
+    "icon": "fas fa-clock"
   }
 ]
