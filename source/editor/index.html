@@ -163,6 +163,14 @@
           <label>标题</label>
           <input type="text" id="inp-title" placeholder="文章标题" style="width:260px">
         </div>
+        <div class="field" id="field-status">
+          <label>状态</label>
+          <select id="inp-status" style="padding:8px 12px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:.85rem;font-family:inherit;outline:none;cursor:pointer">
+            <option value="draft">草稿</option>
+            <option value="pending">待发布</option>
+            <option value="published">已发布</option>
+          </select>
+        </div>
         <div class="field" id="field-tags">
           <label>标签</label>
           <input type="text" id="inp-tags" placeholder="标签1, 标签2" style="width:180px">
@@ -262,18 +270,20 @@
         document.getElementById('sidebar-title').textContent = '文章列表';
         document.getElementById('btn-new').style.display = 'inline-flex';
         document.getElementById('btn-template').style.display = 'inline-flex';
-        // show tags/categories fields
+        // show post fields
         document.getElementById('field-tags').style.display = 'flex';
         document.getElementById('field-categories').style.display = 'flex';
+        document.getElementById('field-status').style.display = 'flex';
         if (!isLocal) loadPosts();
         else { posts = []; renderPostList(); }
       } else {
         document.getElementById('sidebar-title').textContent = '页面管理';
         document.getElementById('btn-new').style.display = 'none';
         document.getElementById('btn-template').style.display = 'none';
-        // hide tags/categories for pages
+        // hide post-only fields for pages
         document.getElementById('field-tags').style.display = 'none';
         document.getElementById('field-categories').style.display = 'none';
+        document.getElementById('field-status').style.display = 'none';
         currentPost = null;
         currentPage = null;
         renderPageList();
@@ -404,7 +414,7 @@
     }
 
     function parseFrontMatter(raw) {
-      let title = '', tags = '', categories = '', body = raw;
+      let title = '', tags = '', categories = '', status = 'published', body = raw;
       const fmMatch = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
       if (fmMatch) {
         body = fmMatch[2];
@@ -415,11 +425,21 @@
         if (tg) tags = tg[1].replace(/['"]/g, '').trim();
         const cg = fm.match(/categories:\s*(.+)/);
         if (cg) categories = cg[1].replace(/^['"]|['"]$/g, '').trim();
+        const st = fm.match(/status:\s*(.+)/);
+        if (st) status = st[1].replace(/^['"]|['"]$/g, '').trim();
+        const pub = fm.match(/published:\s*(.+)/);
+        if (pub && pub[1].trim() === 'false' && status === 'published') status = 'draft';
       }
       document.getElementById('inp-title').value = title;
       document.getElementById('inp-tags').value = tags;
       document.getElementById('inp-categories').value = categories;
+      document.getElementById('inp-status').value = status;
       document.getElementById('editor').value = body;
+      // update status bar with post status
+      const statusLabel = { draft: '草稿', pending: '待发布', published: '已发布' };
+      const statusDot = { draft: '#ef4444', pending: '#eab308', published: '#34d399' };
+      const el = document.getElementById('status');
+      el.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${statusDot[status] || '#34d399'};margin-right:4px"></span>${el.textContent} [${statusLabel[status] || '已发布'}]`;
       updatePreview();
     }
 
@@ -430,6 +450,7 @@
       document.getElementById('inp-title').value = '';
       document.getElementById('inp-tags').value = '';
       document.getElementById('inp-categories').value = '';
+      document.getElementById('inp-status').value = 'draft';
       document.getElementById('editor').value = '';
       document.getElementById('preview').innerHTML = '';
       document.getElementById('btn-delete').style.display = 'none';
@@ -444,6 +465,7 @@
       const title = document.getElementById('inp-title').value.trim();
       const tags = document.getElementById('inp-tags').value.trim();
       const categories = document.getElementById('inp-categories').value.trim();
+      const status = document.getElementById('inp-status').value;
       const body = document.getElementById('editor').value;
       if (!title) return null;
 
@@ -466,8 +488,10 @@
         fm += `\ntags: [${tagList.join(', ')}]`;
       }
       if (categories) fm += `\ncategories: ${categories}`;
+      fm += `\nstatus: ${status}`;
+      if (status !== 'published') fm += `\npublished: false`;
       fm += `\n---\n`;
-      return { title, filename: slugify(title) + '.md', content: fm + body, isPage: false };
+      return { title, filename: slugify(title) + '.md', content: fm + body, isPage: false, status };
     }
 
     // ── save ──
@@ -527,8 +551,9 @@
       try {
         const res = await ghAPI(`contents/${path}`, { method: 'PUT', body: payload });
         currentPost = { name: data.filename, sha: res.content.sha, path };
+        const statusLabel = { draft: '草稿', pending: '待发布', published: '已发布' };
         toast('保存成功！', 'success');
-        document.getElementById('status').textContent = data.filename;
+        document.getElementById('status').textContent = `${data.filename} [${statusLabel[data.status] || '已发布'}]`;
         document.getElementById('btn-delete').style.display = 'inline-flex';
         await loadPosts();
       } catch (e) {
