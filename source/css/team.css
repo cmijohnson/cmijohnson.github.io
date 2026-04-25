@@ -1,5 +1,13 @@
 /* Team Section Styles — inspired by blue-900 / orange-500 design system */
 
+/* ── Clickable card link wrapper ── */
+.team-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.team-card-link:hover { text-decoration: none; }
+
 /* ── Section headers ── */
 .team-section { margin: 2.5rem 0; }
 .team-section-title {

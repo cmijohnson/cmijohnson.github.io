@@ -10,6 +10,7 @@ comments: false
 <div class="team-accent-bar team-accent-bar--green"></div>
 
 <div class="team-research-grid">
+<a href="/blog/2024/03/01/blockchain-iot-auth/" class="team-card-link">
 <div class="team-research-card">
 <div class="team-research-image green-grad">
 <i class="fas fa-link" style="font-size:3rem;color:#16a34a;opacity:.4"></i>
@@ -22,7 +23,9 @@ comments: false
 <div class="achievements"><i class="fas fa-check-circle"></i> 已完成原型设计与核心模块开发</div>
 </div>
 </div>
+</a>
 
+<a href="/blog/2024/06/15/container-escape-detection/" class="team-card-link">
 <div class="team-research-card">
 <div class="team-research-image blue-grad2">
 <i class="fas fa-box" style="font-size:3rem;color:#2563eb;opacity:.4"></i>
@@ -35,6 +38,7 @@ comments: false
 <div class="achievements"><i class="fas fa-check-circle"></i> 形成可复用检测规则与实验数据集</div>
 </div>
 </div>
+</a>
 </div>
 </div>
 

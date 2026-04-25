@@ -10,6 +10,7 @@ comments: false
 <div class="team-accent-bar team-accent-bar--orange"></div>
 
 <div class="team-comp-list">
+<a href="/blog/2023/10/15/national-ctf-2023/" class="team-card-link">
 <div class="team-comp-card">
 <div class="team-comp-image orange-grad">
 <span class="team-comp-badge">一等奖</span>
@@ -21,7 +22,9 @@ comments: false
 <p>在全国总决赛中表现出色，荣获全国一等奖。该赛事是国内信息安全领域最具权威性的学科竞赛之一，涵盖 Web 安全、密码学、逆向工程、取证分析等多个方向。</p>
 </div>
 </div>
+</a>
 
+<a href="/blog/2023/06/20/xctf-2023/" class="team-card-link">
 <div class="team-comp-card reverse">
 <div class="team-comp-image blue-grad">
 <span class="team-comp-badge">分站赛亚军</span>
@@ -33,6 +36,7 @@ comments: false
 <p>在 XCTF 联赛分站赛中取得亚军成绩。XCTF 联赛是亚太地区规模最大的 CTF 竞赛系列，团队在 Web 安全和二进制漏洞利用方向表现突出。</p>
 </div>
 </div>
+</a>
 </div>
 </div>
 
