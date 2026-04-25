@@ -1,0 +1,43 @@
+---
+title: XCTF 国际网络安全联赛分站赛亚军 | XCTF League Runner-up
+date: 2026-04-25 14:14:05
+tags: [安全, CTF, XCTF, 竞赛]
+categories: 技术
+status: draft
+published: false
+---
+
+## 摘要 | Abstract
+
+2023 年 6 月，智链细米安全盾队首次参加 XCTF 国际网络安全联赛即获得分站赛亚军。本文回顾参赛经历与技术挑战。
+
+## 赛事背景 | Background
+
+XCTF 联赛是亚太地区规模最大的 CTF 竞赛系列，由赛宁网安组织运营。联赛采用分站赛 + 总决赛模式，汇聚了来自全球的顶尖安全战队。
+
+## 分站赛亮点 | Competition Highlights
+
+### Web 安全方向
+
+团队在 Web 安全类题目中表现突出，成功利用多种漏洞链组合完成题目：
+
+- **SSRF + Redis 未授权访问**：通过 SSRF 读取内网 Redis 数据获取 flag
+- **文件上传 + 目录穿越**：绕过文件类型检测，上传 webshell 实现 RCE
+- **SSTI 模板注入**：利用 Jinja2 沙箱逃逸获取服务器权限
+
+### 二进制方向
+
+在 PWN 类题目中，团队运用了以下技术：
+
+- **堆利用**：tcache poisoning 与 fastbin attack
+- **格式化字符串**：任意地址读写实现 GOT 表劫持
+- **ROP 链构造**：利用 ret2libc 绕过 NX 保护
+
+## 成绩 | Results
+
+团队以分站赛 **亚军** 的成绩收官，展示了在 Web 安全和二进制漏洞利用方向的扎实功底。
+
+## 参考文献 | References
+
+1. XCTF 联赛官网. https://www.xctf.org.cn/
+2. "Heap Exploitation." heap-exploitation.dreamport.tech
