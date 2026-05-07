@@ -16,5 +16,11 @@
     "date": "2026-03-19",
     "result": "一等奖",
     "description": "上推省赛"
+  },
+  {
+    "name": "CISCN",
+    "date": "2025-12-29",
+    "result": "队伍排名前20%",
+    "description": "遗憾没有进入复赛 第一次真正打ctf"
   }
 ]
