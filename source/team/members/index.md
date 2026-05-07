@@ -37,6 +37,14 @@ comments: false
 <div class="position">核心成员</div>
 <div class="bio">WEB安全高手</div>
 </div>
+
+<div class="team-member-card">
+<div class="team-member-avatar">测</div>
+<h3>测试</h3>
+<div class="position">测试</div>
+<div class="bio">测试</div>
+</div>
+
 </div>
 </div>
 
@@ -64,8 +72,6 @@ comments: false
 </div>
 </div>
 
-
-
 <div class="team-timeline-item">
 <div class="team-timeline-dot"></div>
 <div class="team-timeline-card">
@@ -74,5 +80,6 @@ comments: false
 <p>基于GitHub</p>
 </div>
 </div>
+
 </div>
 </div>
