@@ -146,6 +146,18 @@
     .footer-links a:hover{color:var(--blue)}
     .footer-copy{color:var(--text3);font-size:.78rem}
 
+    /* ── portfolio ── */
+    .portfolio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+    .portfolio-card{background:var(--glass);border:1px solid var(--glass-border);border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;transition:all .3s}
+    .portfolio-card:hover{transform:translateY(-3px);border-color:rgba(79,140,255,.2);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+    .portfolio-card.featured{grid-column:span 1;border-color:rgba(168,85,247,.2)}
+    .portfolio-icon{font-size:1.8rem;margin-bottom:12px;color:var(--blue)}
+    .portfolio-card h3{font-size:1.05rem;font-weight:600;margin-bottom:6px}
+    .portfolio-card p{font-size:.87rem;color:var(--text2);line-height:1.7;flex:1;margin-bottom:12px}
+    .portfolio-tags{display:flex;gap:6px;flex-wrap:wrap}
+    .portfolio-tags span{font-size:.72rem;padding:3px 10px;border-radius:6px;background:rgba(79,140,255,.1);color:var(--blue)}
+    .portfolio-card a.portfolio-link{font-size:.82rem;color:var(--blue);display:flex;align-items:center;gap:4px;margin-top:10px}
+
     /* ── loading ── */
     .skeleton{background:linear-gradient(90deg,var(--glass) 25%,rgba(255,255,255,.06) 50%,var(--glass) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
     @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
@@ -190,8 +202,10 @@
       <div class="nav-links">
         <a href="/" class="active">首页</a>
         <a href="/blog/">博客</a>
+        <a href="/team/">团队</a>
+        <a href="/ctf/">CTF</a>
+        <a href="/friends/">友链</a>
         <a href="/editor/">编辑器</a>
-        <a href="https://github.com/cmijohnson" target="_blank">GitHub</a>
       </div>
     </div>
   </nav>
@@ -243,28 +257,22 @@
         <p>更多内容请访问我的其他平台</p>
         <div class="line"></div>
       </div>
-      <div class="site-grid">
-        <a class="site-card" href="https://www.cmiteam.cn" target="_blank">
-          <div class="site-icon"></div>
-          <h3>个人博客</h3>
-          <div class="site-url">www.cmiteam.cn</div>
-          <div class="site-desc">技术文章、学习笔记与生活感悟的分享平台</div>
-          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
-        </a>
-        <a class="site-card" href="https://www.cmiteam.top" target="_blank">
-          <div class="site-icon"></div>
-          <h3>导航站</h3>
-          <div class="site-url">www.cmiteam.top</div>
-          <div class="site-desc">精选实用工具与资源聚合，高效上网从这里开始</div>
-          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
-        </a>
-        <a class="site-card" href="https://ujs.cmiteam.cn" target="_blank">
-          <div class="site-icon"></div>
-          <h3>江大导航</h3>
-          <div class="site-url">ujs.cmiteam.cn</div>
-          <div class="site-desc">江苏大学专属校园导航，一站式获取校内资源</div>
-          <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
-        </a>
+      <div class="site-grid" id="site-grid">
+        <div class="site-card"><div class="skeleton" style="width:100%;height:16px;margin-bottom:8px"></div><div class="skeleton" style="width:70%;height:10px"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="container">
+      <div class="section-header">
+        <h2>项目作品集</h2>
+        <p>精选项目与作品展示</p>
+        <div class="line"></div>
+      </div>
+      <div class="portfolio-grid" id="portfolio-grid">
+        <div class="project-card"><div class="skeleton" style="width:80%;height:16px;margin-bottom:12px"></div><div class="skeleton" style="width:60%;height:12px"></div></div>
       </div>
     </div>
   </section>
@@ -377,6 +385,44 @@
         if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
     });
+
+    // load sites
+    fetch('/sites.json')
+      .then(r => r.json())
+      .then(items => {
+        const grid = document.getElementById('site-grid');
+        grid.innerHTML = items.map(s => `
+          <a class="site-card" href="${esc(s.url)}" target="_blank">
+            <div class="site-icon"><i class="${esc(s.icon || 'fas fa-globe')}" style="font-size:2rem;opacity:.6"></i></div>
+            <h3>${esc(s.name)}</h3>
+            <div class="site-url">${esc(s.url.replace(/^https?:\/\//, ''))}</div>
+            <div class="site-desc">${esc(s.description || '')}</div>
+            <span class="site-arrow"><i class="fas fa-arrow-up-right-from-square"></i></span>
+          </a>`).join('');
+        document.querySelector('.ticker-item:last-child .ticker-num').textContent = items.length;
+      })
+      .catch(() => {
+        document.getElementById('site-grid').innerHTML = '<p style="text-align:center;color:var(--text3);grid-column:1/-1;padding:20px">暂无站点数据</p>';
+      });
+
+    // load portfolio
+    fetch('/portfolio.json')
+      .then(r => r.json())
+      .then(items => {
+        const grid = document.getElementById('portfolio-grid');
+        grid.innerHTML = items.map(p => {
+          const tags = (p.tags || '').split(/[,，]/).map(t => t.trim()).filter(Boolean);
+          return `
+          <a class="portfolio-card ${p.featured === 'true' ? 'featured' : ''}" href="${esc(p.url || '#')}" ${p.url ? 'target="_blank" rel="noopener"' : ''} style="text-decoration:none;color:inherit">
+            <div class="portfolio-icon"><i class="${esc(p.icon || 'fas fa-folder')}"></i></div>
+            <h3>${esc(p.name)}</h3>
+            <p>${esc(p.description || '')}</p>
+            ${tags.length ? '<div class="portfolio-tags">' + tags.map(t => `<span>${esc(t)}</span>`).join('') + '</div>' : ''}
+          </a>`}).join('');
+      })
+      .catch(() => {
+        document.getElementById('portfolio-grid').innerHTML = '<p style="text-align:center;color:var(--text3);grid-column:1/-1;padding:40px">暂无项目数据</p>';
+      });
 
     // load intro
     fetch('/intro.json')

@@ -1,0 +1,20 @@
+[
+  {
+    "name": "个人博客",
+    "url": "https://www.cmiteam.cn",
+    "description": "技术文章、学习笔记与生活感悟的分享平台",
+    "icon": "fas fa-blog"
+  },
+  {
+    "name": "导航站",
+    "url": "https://www.cmiteam.top",
+    "description": "精选实用工具与资源聚合，高效上网从这里开始",
+    "icon": "fas fa-compass"
+  },
+  {
+    "name": "江大导航",
+    "url": "https://ujs.cmiteam.cn",
+    "description": "江苏大学专属校园导航，一站式获取校内资源",
+    "icon": "fas fa-graduation-cap"
+  }
+]

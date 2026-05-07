@@ -1,0 +1,11 @@
+[
+  {
+    "name": "博客编辑器",
+    "description": "基于 GitHub API 的在线博客管理工具，支持文章、页面和数据管理",
+    "image": "",
+    "url": "/editor/",
+    "tags": "Hexo, GitHub API, 前端",
+    "icon": "fas fa-edit",
+    "featured": "true"
+  }
+]

@@ -344,6 +344,49 @@
           { key: 'title', label: '标题', type: 'text', required: true },
           { key: 'description', label: '描述', type: 'textarea' }
         ]},
+      { key: 'friends', name: '友链', icon: 'fas fa-handshake', file: 'source/_data/friends.json',
+        fields: [
+          { key: 'name', label: '名称', type: 'text', required: true },
+          { key: 'url', label: '链接', type: 'text', required: true },
+          { key: 'avatar', label: '头像URL', type: 'text' },
+          { key: 'description', label: '描述', type: 'text' },
+          { key: 'icon', label: '图标', type: 'text' }
+        ]},
+      { key: 'writeups', name: 'CTF 题解', icon: 'fas fa-flag', file: 'source/_data/writeups.json',
+        fields: [
+          { key: 'title', label: '题目', type: 'text', required: true },
+          { key: 'event', label: '赛事', type: 'text' },
+          { key: 'category', label: '分类', type: 'select', options: [{v:'web',l:'Web'},{v:'crypto',l:'Crypto'},{v:'pwn',l:'Pwn'},{v:'reverse',l:'Reverse'},{v:'misc',l:'Misc'},{v:'forensics',l:'Forensics'}] },
+          { key: 'date', label: '日期', type: 'text' },
+          { key: 'difficulty', label: '难度', type: 'select', options: [{v:'easy',l:'简单'},{v:'medium',l:'中等'},{v:'hard',l:'困难'}] },
+          { key: 'link', label: '链接', type: 'text' },
+          { key: 'description', label: '题解', type: 'textarea' }
+        ]},
+      { key: 'honors', name: '荣誉墙', icon: 'fas fa-medal', file: 'source/_data/honors.json',
+        fields: [
+          { key: 'award', label: '奖项', type: 'text', required: true },
+          { key: 'event', label: '赛事', type: 'text' },
+          { key: 'year', label: '年份', type: 'text' },
+          { key: 'level', label: '等级', type: 'select', options: [{v:'gold',l:'金牌'},{v:'silver',l:'银牌'},{v:'bronze',l:'铜牌'},{v:'other',l:'其他'}] },
+          { key: 'members', label: '成员', type: 'text' }
+        ]},
+      { key: 'portfolio', name: '项目作品集', icon: 'fas fa-star', file: 'source/_data/portfolio.json',
+        fields: [
+          { key: 'name', label: '项目名', type: 'text', required: true },
+          { key: 'description', label: '描述', type: 'textarea' },
+          { key: 'image', label: '封面图URL', type: 'text' },
+          { key: 'url', label: '项目链接', type: 'text' },
+          { key: 'tags', label: '标签(逗号分隔)', type: 'text' },
+          { key: 'icon', label: '图标', type: 'text' },
+          { key: 'featured', label: '精选', type: 'select', options: [{v:'true',l:'是'},{v:'false',l:'否'}] }
+        ]},
+      { key: 'sites', name: '我的站点', icon: 'fas fa-globe', file: 'source/_data/sites.json',
+        fields: [
+          { key: 'name', label: '站点名', type: 'text', required: true },
+          { key: 'url', label: '链接', type: 'text', required: true },
+          { key: 'description', label: '描述', type: 'text' },
+          { key: 'icon', label: '图标', type: 'text' }
+        ]},
       { key: 'site', name: '网站设置', icon: 'fas fa-cog', file: '',
         fields: [
           { key: 'title', label: '站点标题', type: 'text', configPath: '_config.yml', yamlKey: 'title' },
@@ -1218,7 +1261,7 @@
         toast(dt.name + ' 数据已保存！', 'success');
         document.getElementById('status').textContent = dt.name + ' · ' + dataStore[dt.key].length + ' 条';
         // also write root-level copy for homepage access
-        const rootCopy = { research: 'source/research.json', intro: 'source/intro.json' };
+        const rootCopy = { research: 'source/research.json', intro: 'source/intro.json', friends: 'source/friends.json', portfolio: 'source/portfolio.json', sites: 'source/sites.json' };
         if (rootCopy[dt.key]) {
           try {
             let rootSha;
@@ -1242,8 +1285,11 @@
         research: 'source/team/research/index.md',
         advisors: 'source/team/advisors/index.md',
         timeline: 'source/team/members/index.md',
+        honors: 'source/team/members/index.md',
         news: 'source/team/index.md',
-        changelog: 'source/announcements/index.md'
+        changelog: 'source/announcements/index.md',
+        friends: 'source/friends/index.md',
+        writeups: 'source/ctf/index.md'
       };
       const pagePath = pageMap[key];
       if (!pagePath) return;
@@ -1254,11 +1300,15 @@
         html = '---\ntitle: 智链细米安全盾队\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
       } else if (key === 'changelog') {
         html = '---\ntitle: 更新日志\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      } else if (key === 'friends') {
+        html = '---\ntitle: 友链\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+      } else if (key === 'writeups') {
+        html = '---\ntitle: CTF Writeups\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
       } else {
-        html = '---\ntitle: ' + ({members:'团队风采',competitions:'竞赛成果',research:'科研项目',advisors:'指导教师',timeline:'团队风采'}[key]) + '\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
+        html = '---\ntitle: ' + ({members:'团队风采',competitions:'竞赛成果',research:'科研项目',advisors:'指导教师',timeline:'团队风采',honors:'团队风采'}[key]) + '\ndate: 2026-04-22 00:00:00\ncomments: false\n---\n\n';
       }
 
-      if (key === 'members') {
+      if (key === 'members' || key === 'honors') {
         const members = dataStore.members || [];
         html += '<div class="team-section">\n<h2 class="team-section-title">核心成员</h2>\n<p class="team-section-subtitle">Core Members</p>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-members-grid">\n';
         members.forEach(m => {
@@ -1270,6 +1320,23 @@
         html += '\n<div class="team-section">\n<h2 class="team-section-title">团队发展历程</h2>\n<p class="team-section-subtitle">Our Journey</p>\n<div class="team-accent-bar team-accent-bar--orange"></div>\n\n<div class="team-timeline">\n';
         tl.forEach(t => {
           html += `<div class="team-timeline-item">\n<div class="team-timeline-dot"></div>\n<div class="team-timeline-card">\n<div class="year">${esc(t.year)}</div>\n<h4>${esc(t.title)}</h4>\n<p>${esc(t.description||'')}</p>\n</div>\n</div>\n\n`;
+        });
+        html += '</div>\n</div>\n';
+        // honors wall
+        const honors = dataStore.honors || [];
+        const gold = honors.filter(h => h.level === 'gold').length;
+        const silver = honors.filter(h => h.level === 'silver').length;
+        const bronze = honors.filter(h => h.level === 'bronze').length;
+        html += '\n<div class="team-section">\n<h2 class="team-section-title">荣誉墙</h2>\n<p class="team-section-subtitle">Honors</p>\n<div class="team-accent-bar team-accent-bar--orange"></div>\n\n';
+        html += '<div style="display:flex;gap:20px;justify-content:center;margin-bottom:24px;flex-wrap:wrap">';
+        if (gold) html += `<div style="background:rgba(234,179,8,.1);border:1px solid rgba(234,179,8,.2);border-radius:12px;padding:16px 28px;text-align:center"><div style="font-size:2rem;font-weight:800;color:#eab308">${gold}</div><div style="font-size:.82rem;color:#eab308">金牌</div></div>`;
+        if (silver) html += `<div style="background:rgba(148,163,184,.1);border:1px solid rgba(148,163,184,.2);border-radius:12px;padding:16px 28px;text-align:center"><div style="font-size:2rem;font-weight:800;color:#94a3b8">${silver}</div><div style="font-size:.82rem;color:#94a3b8">银牌</div></div>`;
+        if (bronze) html += `<div style="background:rgba(180,83,9,.1);border:1px solid rgba(180,83,9,.2);border-radius:12px;padding:16px 28px;text-align:center"><div style="font-size:2rem;font-weight:800;color:#d97706">${bronze}</div><div style="font-size:.82rem;color:#d97706">铜牌</div></div>`;
+        html += '</div>\n\n<div class="team-comp-list">\n';
+        honors.forEach(h => {
+          const levelIcon = h.level === 'gold' ? 'fas fa-trophy' : h.level === 'silver' ? 'fas fa-medal' : 'fas fa-award';
+          const levelColor = h.level === 'gold' ? '#eab308' : h.level === 'silver' ? '#94a3b8' : '#d97706';
+          html += `<div class="team-comp-card">\n<div class="team-comp-image orange-grad">\n<span class="team-comp-badge">${esc(h.award)}</span>\n<i class="${levelIcon}" style="font-size:4rem;color:${levelColor};opacity:.3"></i>\n</div>\n<div class="team-comp-content">\n<div class="date">${esc(h.year||'')}</div>\n<h3>${esc(h.event||h.award)}</h3>\n<p>成员：${esc(h.members||'团队')}</p>\n</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
       } else if (key === 'competitions') {
@@ -1318,9 +1385,25 @@
           html += `<div class="team-timeline-item">\n<div class="team-timeline-dot"></div>\n<div class="team-timeline-card">\n<div class="year">${esc(c.date)}</div>\n<h4>${esc(c.title)}</h4>\n<p>${esc(c.description||'')}</p>\n</div>\n</div>\n\n`;
         });
         html += '</div>\n</div>\n';
+      } else if (key === 'friends') {
+        const items = dataStore.friends || [];
+        html += '<div class="team-section">\n<h2 class="team-section-title">友情链接</h2>\n<p class="team-section-subtitle">Friends</p>\n<div class="team-accent-bar team-accent-bar--blue"></div>\n\n<div class="team-members-grid">\n';
+        items.forEach(f => {
+          html += `<div class="team-member-card">\n<div class="team-member-avatar">${f.avatar ? '<img src="'+esc(f.avatar)+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover">' : esc(f.name.charAt(0))}</div>\n<h3>${esc(f.name)}</h3>\n<div class="bio">${esc(f.description||'')}</div>\n${renderLinks([{url:f.url,label:'访问'}])}</div>\n\n`;
+        });
+        html += '</div>\n</div>\n';
+      } else if (key === 'writeups') {
+        const items = dataStore.writeups || [];
+        const catLabels = {web:'Web',crypto:'Crypto',pwn:'Pwn',reverse:'Reverse',misc:'Misc',forensics:'Forensics'};
+        const catColors = {web:'#4f8cff',crypto:'#a855f7',pwn:'#ef4444',reverse:'#f97316',misc:'#34d399',forensics:'#22d3ee'};
+        const diffLabels = {easy:'简单',medium:'中等',hard:'困难'};
+        html += '<div class="team-section">\n<h2 class="team-section-title">CTF 题解</h2>\n<p class="team-section-subtitle">Writeups</p>\n<div class="team-accent-bar team-accent-bar--orange"></div>\n\n<div class="team-research-grid">\n';
+        items.forEach(w => {
+          const catColor = catColors[w.category] || '#4f8cff';
+          html += `<div class="team-research-card">\n<div class="team-research-image green-grad">\n<i class="fas fa-flag" style="font-size:3rem;color:${catColor};opacity:.4"></i>\n</div>\n<div class="team-research-body">\n<h3>${esc(w.title)}</h3>\n<div class="date">${esc(w.event||'')} · ${esc(w.date||'')}</div>\n<div style="display:flex;gap:6px;margin:6px 0">${w.category ? '<span style="font-size:.72rem;padding:2px 8px;border-radius:4px;background:'+catColor+'22;color:'+catColor+'">'+esc(catLabels[w.category]||w.category)+'</span>' : ''}${w.difficulty ? '<span style="font-size:.72rem;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.06);color:var(--text2)">'+esc(diffLabels[w.difficulty]||w.difficulty)+'</span>' : ''}</div>\n<p>${esc(w.description||'')}</p>\n${w.link ? renderLinks([{url:w.link,label:'查看题解'}]) : ''}</div>\n</div>\n\n`;
+        });
+        html += '</div>\n</div>\n';
       }
-
-      // save regenerated page
       const b64 = btoa(unescape(encodeURIComponent(html)));
       // get current sha
       let sha;
