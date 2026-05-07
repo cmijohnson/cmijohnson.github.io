@@ -14,6 +14,15 @@ comments: false
 <div class="team-timeline-item">
 <div class="team-timeline-dot"></div>
 <div class="team-timeline-card">
+<div class="year">2026-05-07</div>
+<h4>全站功能大更新：搜索、RSS、友链、CTF、作品集</h4>
+<p>启用本地搜索与 RSS 订阅，新增友链页面与 CTF 专区，首页新增项目作品集板块，团队页面新增荣誉墙，站点数据改为编辑器可管理。启用不蒜子访客统计与页面目录。</p>
+</div>
+</div>
+
+<div class="team-timeline-item">
+<div class="team-timeline-dot"></div>
+<div class="team-timeline-card">
 <div class="year">2026-04-25</div>
 <h4>编辑器扩展：数据管理与分组</h4>
 <p>编辑器新增「数据」Tab，支持管理团队成员、竞赛、科研、教师、时间轴、最新动态等结构化数据。侧边栏改为分组显示（网站 / 团队），操作更清晰。</p>
