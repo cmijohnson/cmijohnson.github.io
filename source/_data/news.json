@@ -1,3 +1,14 @@
 [
-  { "date": "2026-04-22", "title": "团队展示系统正式上线", "link": "/blog/2026/04/22/team-showcase/", "icon": "fas fa-shield-halved" }
+  {
+    "date": "2026-04-22",
+    "title": "团队展示系统正式上线",
+    "link": "/blog/2026/04/22/team-showcase/",
+    "icon": "fas fa-shield-halved"
+  },
+  {
+    "date": "2026年5月7日",
+    "title": "密码学学习平台上线",
+    "link": "/cmijohnson-crypto-learning",
+    "icon": "fas fa-key"
+  }
 ]
