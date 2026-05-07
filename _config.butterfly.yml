@@ -22,6 +22,7 @@ code_word_wrap: false
 # Social
 social:
   fab fa-github: https://github.com/cmijohnson || GitHub
+  fas fa-rss: /atom.xml || RSS
   fas fa-globe: https://www.cmiteam.cn || Homepage
 
 # Avatar
