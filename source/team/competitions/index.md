@@ -23,5 +23,17 @@ comments: false
 </div>
 </div>
 
+<div class="team-comp-card reverse">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">一等奖</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2026-03-19</div>
+<h3>江苏大学计算机设计大赛2026</h3>
+<p>上推省赛</p>
+</div>
+</div>
+
 </div>
 </div>
