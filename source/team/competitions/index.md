@@ -35,5 +35,29 @@ comments: false
 </div>
 </div>
 
+<div class="team-comp-card">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">队伍排名前20%</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2025-12-29</div>
+<h3>CISCN</h3>
+<p>遗憾没有进入复赛 第一次真正打ctf</p>
+</div>
+</div>
+
+<div class="team-comp-card reverse">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">暂无</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2026 — 至今</div>
+<h3>外包创业创新大赛</h3>
+<p>暂无</p>
+</div>
+</div>
+
 </div>
 </div>
