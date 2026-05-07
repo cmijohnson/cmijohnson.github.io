@@ -1,11 +1,11 @@
 [
   {
-    "name": "博客编辑器",
-    "description": "基于 GitHub API 的在线博客管理工具，支持文章、页面和数据管理",
+    "name": "密码学学习参考网",
+    "description": "vibe出来的一个学习复习信息安全数学的网站",
     "image": "",
-    "url": "/editor/",
-    "tags": "Hexo, GitHub API, 前端",
-    "icon": "fas fa-edit",
+    "url": "/cmijohnson-crypto-learning/",
+    "tags": "学习",
+    "icon": "fas fa-code",
     "featured": "true"
   }
 ]
