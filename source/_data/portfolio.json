@@ -7,5 +7,14 @@
     "tags": "学习",
     "icon": "fas fa-code",
     "featured": "true"
+  },
+  {
+    "name": "江苏大学比赛大赏",
+    "description": "江苏大学赛事攻略（仅江大认可的赛事）\n根据专业、学院等进行定制推荐",
+    "image": "",
+    "url": "https://cmijohnson.github.io/jsu-match/#/home",
+    "tags": "江苏大学",
+    "icon": "fas fa-users",
+    "featured": "true"
   }
 ]
