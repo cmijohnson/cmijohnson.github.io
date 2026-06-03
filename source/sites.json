@@ -16,5 +16,11 @@
     "url": "https://ujs.cmiteam.cn",
     "description": "江苏大学专属校园导航，一站式获取校内资源",
     "icon": "fas fa-graduation-cap"
+  },
+  {
+    "name": "万能导航2.0",
+    "url": "https://cmijohnson.github.io/CMItool-gh-pages",
+    "description": "交流社区、万能导航为一体的学生社区。欢迎体验。",
+    "icon": "fas fa-globe"
   }
 ]
