@@ -61,5 +61,17 @@ comments: false
 </div>
 </a>
 
+<a href="#" class="team-card-link">
+<div class="team-news-card">
+<div class="team-news-image blue-grad3">
+<i class="fas fa-users" style="font-size:3rem;color:#2563eb;opacity:.5"></i>
+</div>
+<div class="team-news-body">
+<div class="date">2026-6-6</div>
+<h4>外包大赛圆满结束！</h4>
+</div>
+</div>
+</a>
+
 </div>
 </div>
