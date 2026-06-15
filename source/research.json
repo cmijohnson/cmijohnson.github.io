@@ -1,3 +1,10 @@
 [
-  { "title": "暂未公布", "date": "2026 — 至今", "status": "ongoing", "description": "MAS动态权限有关。", "icon": "fas fa-link", "color": "green" }
+  {
+    "title": "基于行为指纹的多智能体异常检测与动态权限管控研究",
+    "date": "2026 — 至今",
+    "status": "ongoing",
+    "icon": "fas fa-link",
+    "color": "green",
+    "description": "MAS动态权限有关。国家级推荐+重点支持（全校唯二）"
+  }
 ]
