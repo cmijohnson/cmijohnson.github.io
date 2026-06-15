@@ -12,14 +12,13 @@ comments: false
 <div class="team-comp-list">
 <div class="team-comp-card">
 <div class="team-comp-image orange-grad">
-<span class="team-comp-badge">暂无</span>
+<span class="team-comp-badge">区域赛二等奖</span>
 <i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
 </div>
 <div class="team-comp-content">
-<div class="date">日期待定</div>
-<h3>暂无</h3>
+<div class="date">2026</div>
+<h3>第二十八届中国机器人及人工智能大赛（江苏赛区）暨第六届江苏省机器人及人工智能大赛</h3>
 <p>暂无</p>
-<div class="team-links"><a href="www.cmiteam.top" target="_blank" rel="noopener"><i class="fas fa-link"></i> 测试用</a></div>
 </div>
 </div>
 
@@ -49,13 +48,49 @@ comments: false
 
 <div class="team-comp-card reverse">
 <div class="team-comp-image orange-grad">
-<span class="team-comp-badge">暂无</span>
+<span class="team-comp-badge">东部区域赛二等奖</span>
 <i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
 </div>
 <div class="team-comp-content">
-<div class="date">2026 — 至今</div>
-<h3>外包创业创新大赛</h3>
-<p>暂无</p>
+<div class="date">2026 — 2026</div>
+<h3>第17届外包服务创业创新大赛东部赛区晋级决赛</h3>
+<p>网安渗透智能体</p>
+</div>
+</div>
+
+<div class="team-comp-card">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">未知</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2026</div>
+<h3>ISCC</h3>
+<p>团队成员均参加了ISCC的数据安全赛，部分成员参加了CTF及擂台赛，比赛结果暂未公布</p>
+</div>
+</div>
+
+<div class="team-comp-card reverse">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">校二等奖</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2025</div>
+<h3>中国国际大学生创新大赛（2025）校内选拔赛 “青年红色筑梦之旅”赛道</h3>
+<p></p>
+</div>
+</div>
+
+<div class="team-comp-card">
+<div class="team-comp-image orange-grad">
+<span class="team-comp-badge">区域赛三等奖</span>
+<i class="fas fa-trophy" style="font-size:4rem;color:#f97316;opacity:.3"></i>
+</div>
+<div class="team-comp-content">
+<div class="date">2026</div>
+<h3>中国高校智能机器人创意大赛区域赛三等奖</h3>
+<p></p>
 </div>
 </div>
 
