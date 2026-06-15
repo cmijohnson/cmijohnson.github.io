@@ -5,5 +5,12 @@
     "avatar": "https://github.com/github.png",
     "description": "这是一个示例友链，可通过编辑器修改",
     "icon": "fas fa-globe"
+  },
+  {
+    "name": "hornzz-SRE Team",
+    "url": "https://hornzz.cn",
+    "avatar": "",
+    "description": "",
+    "icon": "fas fa-user"
   }
 ]
