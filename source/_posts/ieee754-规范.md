@@ -1,11 +1,10 @@
 ---
 title: IEEE754 规范
-date: 2026-06-16 18:59:34
+date: 2026-06-16 19:01:18
 author: 网络
 tags: [计算机硬件]
 categories: 组成原理
-status: draft
-published: false
+status: published
 ---
 # 程序员数学之 IEEE754 规范（整理版）
 通用版：https://www.yuque.com/u2333-ohan5/gbpqhm/readme?singleDoc#
